@@ -3,6 +3,7 @@ import { NavItemInter } from "../assets/Interfaces";
 import { Squeeze as Hamburger } from "hamburger-react";
 import NavTitle from "./components/NavTitle";
 import NavItems from "./components/NavItems";
+import "../styles/layout/Navbar.scss";
 
 const NavItem: NavItemInter[] = [
     { text: "Home", path: "/" },
@@ -15,8 +16,6 @@ const UserItem: NavItemInter[] = [
 ];
 
 function Navbar() {
-    const [activeHam, setActiveHam] = useState<boolean>(false);
-    const [isOpen, setOpen] = useState(false);
     const [style, setStyle] = useState<boolean>(false);
 
     const [windowSize, setWindowSize] = useState({
@@ -34,16 +33,10 @@ function Navbar() {
     }, []);
 
     return (
-        <div
-            className={
-                style
-                    ? "flex flex-col lg:flex-row h-30 lg:h-20 items-center justify-between text-xl py-4"
-                    : "flex flex-col lg:flex-row h-14 lg:h-20 items-center justify-between text-xl py-4"
-            }
-        >
-            <div className="flex flex-row">
+        <div className={style ? "opened navbar" : "navbar"}>
+            <div className="title-and-hamburger">
                 <NavTitle />
-                <span className={windowSize.width < 1024 ? "inline" : "hidden"}>
+                <span className={windowSize.width < 1024 ? "show" : "hide"}>
                     <Hamburger
                         onToggle={(toggled) => {
                             if (toggled) {
@@ -58,24 +51,12 @@ function Navbar() {
                     />
                 </span>
             </div>
-            <div
-                className={
-                    style
-                        ? "transition-opacity flex flex-col lg:flex-row"
-                        : "lg:flex flex-col invisible opacity-0 lg:flex-row"
-                }
-            >
+            <div className={style ? "show links" : "hide links"}>
                 {NavItem.map((navitem: NavItemInter, i: number) => {
                     return <NavItems key={i} {...navitem} />;
                 })}
             </div>
-            <div
-                className={
-                    style
-                        ? "transition-opacity flex flex-col lg:flex-row user lg:mr-10"
-                        : "lg:flex flex-col opacity-0 invisible lg:flex-row user lg:mr-10"
-                }
-            >
+            <div className={style ? "show links" : "hide links"}>
                 {UserItem.map((navitem: NavItemInter, i: number) => {
                     return <NavItems key={i} {...navitem} />;
                 })}

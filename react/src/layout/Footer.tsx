@@ -1,7 +1,8 @@
 import React from "react";
+import "../styles/layout/Footer.scss";
 
 function Footer() {
-    return <div className="fixed bottom-0">&copy; God of War Wiki 2023</div>;
+    return <div className="footer">&copy; God of War Wiki 2023</div>;
 }
 
 export default Footer;
