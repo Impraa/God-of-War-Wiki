@@ -36,7 +36,11 @@ function Navbar() {
         <div className={style ? "opened navbar" : "navbar"}>
             <div className="title-and-hamburger">
                 <NavTitle />
-                <span className={windowSize.width < 1024 ? "show" : "hide"}>
+                <span
+                    className={
+                        windowSize.width < 1024 ? "show-ham" : "hide-ham"
+                    }
+                >
                     <Hamburger
                         onToggle={(toggled) => {
                             if (toggled) {
