@@ -4,5 +4,13 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0 12em;
+    padding: 0 1em;
+    .title {
+        font-size: 1.5em;
+        text-align: center;
+    }
+    .desciription {
+        text-align: center;
+        font-size: 0.5em;
+    }
 }
