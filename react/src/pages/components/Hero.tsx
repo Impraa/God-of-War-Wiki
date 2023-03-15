@@ -14,6 +14,7 @@ function Hero() {
                 of Olympus to encounters with the Titans, this website is the
                 ultimate resource for fans of the series.
             </p>
+            <button>Explore now</button>
         </div>
     );
 }
