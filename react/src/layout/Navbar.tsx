@@ -12,7 +12,7 @@ const NavItem: NavItemInter[] = [
 
 const UserItem: NavItemInter[] = [
     { text: "Login", path: "/login" },
-    { text: "Sign up", path: "/signup" },
+    { text: "Register", path: "/register" },
 ];
 
 function Navbar() {
