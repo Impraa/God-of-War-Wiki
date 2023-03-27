@@ -41,10 +41,11 @@ form {
         }
     }
     button {
-        transform: translateY(1.5em);
+        transform: translateY(1em);
         background-color: white;
         border: none;
         font-size: 1.25em;
+        transition: 0.2s ease-in-out;
         &:hover {
             transform: scale(1.25);
             text-decoration: line-through;
