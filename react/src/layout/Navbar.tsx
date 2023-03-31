@@ -49,7 +49,7 @@ function Navbar() {
                                 setStyle(false);
                             }
                         }}
-                        color="black"
+                        color="white"
                         easing="ease-out"
                         rounded
                     />

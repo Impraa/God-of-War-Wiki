@@ -1,9 +1,6 @@
 @import "../../variables";
 
 .hero {
-    background-image: url("../src/assets/KratosScreen.png");
-    background-size: cover;
-    background-position: 51%;
     height: 90.75vh;
     display: flex;
     flex-direction: column;
@@ -17,12 +14,13 @@
     .description {
         text-align: center;
         font-size: 1.25em;
-        padding: 1em 0em;
+        padding-bottom: 1em;
     }
     button {
         background-color: transparent;
         border: none;
         border-bottom: 0.5px solid $red;
+        color: rgba(255, 255, 255, 0.856);
         font-size: 1.5em;
         transition: 0.125s ease-in-out;
         &:hover {

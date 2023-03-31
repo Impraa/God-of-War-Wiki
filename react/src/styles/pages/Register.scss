@@ -14,8 +14,9 @@ form {
         input {
             font-size: 1.25em;
             border: none;
+            background-color: transparent;
             position: relative;
-            border-bottom: 0.05em solid black;
+            border-bottom: 0.05em solid rgba(255, 255, 255, 0.856);
             outline: none;
             &:focus {
                 & + span {
@@ -42,7 +43,8 @@ form {
     }
     button {
         transform: translateY(1em);
-        background-color: white;
+        background-color: transparent;
+        color: rgba(255, 255, 255, 0.856);
         border: none;
         font-size: 1.25em;
         transition: 0.2s ease-in-out;
