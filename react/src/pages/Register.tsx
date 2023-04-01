@@ -1,26 +1,38 @@
 import React from "react";
 import "../styles/pages/Register.scss";
+import { InputInter } from "../assets/Interfaces";
+import Input from "./components/Input";
+
+const InputArr: InputInter[] = [
+    {
+        classname: "username",
+        type: "text",
+        spanText: "Username",
+    },
+    {
+        classname: "email",
+        type: "email",
+        spanText: "Email",
+    },
+    {
+        classname: "first-password",
+        type: "password",
+        spanText: "Password",
+    },
+    {
+        classname: "second-password",
+        type: "password",
+        spanText: "Confirm Password",
+    },
+];
 
 function Register() {
     return (
         <div className="register">
             <form action="">
-                <div className="username">
-                    <input type="text" required />
-                    <span>Username </span>
-                </div>
-                <div className="email">
-                    <input type="email" required />
-                    <span>Email </span>
-                </div>
-                <div className="first-password">
-                    <input type="text" required />
-                    <span>Password </span>
-                </div>
-                <div className="second-password">
-                    <input type="text" required />
-                    <span>Confirm Password</span>
-                </div>
+                {InputArr.map((item: InputInter, i: number) => {
+                    return <Input key={i} {...item} />;
+                })}
                 <button>Register</button>
             </form>
         </div>

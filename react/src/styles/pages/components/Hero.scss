@@ -3,31 +3,40 @@
 .hero {
     height: 90.75vh;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     padding: 0 1em;
-    .title {
-        font-size: 1.5em;
-        text-align: center;
+    .zeusImg {
+        display: none;
     }
-    .description {
-        text-align: center;
-        font-size: 1.25em;
-        padding-bottom: 1em;
-    }
-    button {
-        background-color: transparent;
-        border: none;
-        border-bottom: 0.5px solid $red;
-        color: rgba(255, 255, 255, 0.856);
-        font-size: 1.5em;
-        transition: 0.125s ease-in-out;
-        &:hover {
+    .text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .title {
+            font-size: 1.5em;
+            text-align: center;
+        }
+        .description {
+            text-align: center;
+            font-size: 1.25em;
+            padding-bottom: 1em;
+        }
+        .explore-btn {
+            background-color: transparent;
             border: none;
-            border-bottom: 1px solid $red;
-            transform: scale(1.25);
-            cursor: pointer;
+            border-bottom: 0.5px solid $red;
+            color: rgba(255, 255, 255, 0.856);
+            font-size: 1.5em;
+            transition: 0.125s ease-in-out;
+            &:hover {
+                border: none;
+                border-bottom: 1px solid $red;
+                transform: scale(1.25);
+                cursor: pointer;
+            }
         }
     }
 }
@@ -41,6 +50,10 @@
 @media (min-width: 1024px) {
     .hero {
         padding: 0 6em;
+        .zeusImg {
+            display: inline;
+            width: 40em;
+        }
     }
 }
 
