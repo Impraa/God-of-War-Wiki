@@ -10,7 +10,7 @@ function Hero() {
             <div className="text">
                 <h2 className="title">
                     Chronicles of the God of War: The Epic Journey through
-                    Ancient Mythology
+                    Ancient Greek Mythology
                 </h2>
                 <p className="description">
                     Delve into the world of Kratos and uncover the secrets of
