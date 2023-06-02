@@ -16,7 +16,7 @@ function Hero() {
                     Delve into the world of Kratos and uncover the secrets of
                     the pre-Nordic era God of War games. From battles against
                     the gods of Olympus to encounters with the Titans and
-                    Mythological Creatures, this website is the ultimate
+                    Mythological creatures, this website is the ultimate
                     resource for fans of the series.
                 </p>
                 <Link to={"/"}>
