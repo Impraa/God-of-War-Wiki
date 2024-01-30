@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\LoginType;
 use App\Form\RegisterType;
+use App\Form\UpdateProfileType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -119,8 +121,17 @@ class UserController extends AbstractController
 
         $jwtToken = $this->jwtManager->create($foundUser);
 
-        $cookie = new Cookie("JWT_TOKEN", $jwtToken, strtotime("+1 hour"));
-
+        $cookie = new Cookie(
+            "JWT_TOKEN",
+            $jwtToken,
+            strtotime("+1 hour"),
+            "/",
+            null,
+            true,
+            true,
+            true,
+            "none"
+        );
         $response = $this->json(["user" => $foundUser], 200);
 
         $response->headers->setCookie($cookie);
@@ -128,14 +139,53 @@ class UserController extends AbstractController
         return $response;
     }
 
-    #[Route("/edit", name: "edit_profile", methods: ["PATCH"])]
+    #[Route("/edit/{id}", name: "edit_profile", methods: ["POST"])]
     public function editProfile(
+        User $user,
         Request $request,
+        SluggerInterface $slugger,
+        Filesystem $filesystem,
+        EntityManagerInterface $entityManager
     ): JsonResponse {
-        echo (json_encode($request->getContent(), true));
+
+        $form = $this->createForm(UpdateProfileType::class, $user);
+
+        $userImage = $user->getProfilePicture();
+
+        $form->submit($request->request->all());
+        if ($form->isValid()) {
+
+            if ($request->files->has("profilePicture")) {
+                $profileImage = $request->files->get('profilePicture');
+
+                $originalImageName = $profileImage->getClientOriginalName();
+
+                $safeImageName = $slugger->slug($originalImageName);
+
+                $newImageName = $safeImageName . '-' . uniqid() . '.' . $profileImage->guessExtension();
+
+                $profileImage->move($this->getParameter("profile_pictures_directory"), $newImageName);
+
+                if ($userImage) {
+                    $existingImagePath = $this->getParameter("profile_pictures_directory") . '/' . $userImage;
+                    unlink($existingImagePath);
+                }
+                $user->setProfilePicture($newImageName);
+            }
+
+
+
+            $entityManager->flush();
+
+            return $this->json([
+                "Message" => "success user was updated",
+            ], 200);
+        }
 
         return $this->json([
-            "Message" => "user was not found"
-        ], 404);
+            "Message" => "error occured",
+            "Error" => $form->getErrors()
+        ], 400);
     }
+
 }
