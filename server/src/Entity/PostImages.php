@@ -2,22 +2,27 @@
 
 namespace App\Entity;
 
-use App\Repository\PostImagesRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PostImagesRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PostImagesRepository::class)]
+#[Groups(["post_images"])]
 class PostImages
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["post_image"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["post_image"])]
     private ?string $postImage = null;
 
-    #[ORM\ManyToOne(inversedBy: 'postImages')]
+    #[ORM\ManyToOne(inversedBy: 'postImages', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['post_details'])]
     private ?Post $post = null;
 
     public function getId(): ?int

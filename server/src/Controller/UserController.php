@@ -6,8 +6,11 @@ use App\Entity\User;
 use App\Form\LoginType;
 use App\Form\RegisterType;
 use App\Form\UpdateProfileType;
+use App\Security\EmailVerifier;
 use App\Repository\UserRepository;
+use Symfony\Component\Mime\Address;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,8 +18,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 #[Route(path: "/api", name: "api_")]
 class UserController extends AbstractController
@@ -27,6 +32,7 @@ class UserController extends AbstractController
         private UserPasswordHasherInterface $passwordHasher,
         private EntityManagerInterface $entityManager,
         private JWTTokenManagerInterface $jwtManager,
+        private EmailVerifier $emailVerifier,
     ) {
     }
 
@@ -67,6 +73,17 @@ class UserController extends AbstractController
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
+            $this->emailVerifier->sendEmailConfirmation(
+                'api_verify_email',
+                $user,
+                (new TemplatedEmail())
+                    ->from(new Address('godofwar@kratos.com', 'God of war Wiki'))
+                    ->to($user->getEmail())
+                    ->subject('Please Confirm your Email')
+                    ->htmlTemplate('confirmation_email.html.twig')
+            );
+
+
             $jwtToken = $this->jwtManager->create($user);
 
             $cookie = new Cookie("JWT_TOKEN", $jwtToken, strtotime("+1 hour"));
@@ -105,9 +122,16 @@ class UserController extends AbstractController
         $form->submit($request->request->all());
 
         if (!$form->isValid()) {
+
+            $errorMessages = [];
+
+            foreach ($form->getErrors(true) as $error) {
+                $errorMessages[] = $error->getMessage();
+            }
+
             return $this->json([
                 "message" => "Error not all data was provided",
-                "errors" => $form->getErrors(true)
+                "errors" => $errorMessages
             ], 400);
         }
 
@@ -147,7 +171,6 @@ class UserController extends AbstractController
         Filesystem $filesystem,
         EntityManagerInterface $entityManager
     ): JsonResponse {
-
         $form = $this->createForm(UpdateProfileType::class, $user);
 
         $userImage = $user->getProfilePicture();
@@ -173,7 +196,7 @@ class UserController extends AbstractController
                 $user->setProfilePicture($newImageName);
             }
 
-
+            $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
 
             $entityManager->flush();
 
@@ -182,10 +205,64 @@ class UserController extends AbstractController
             ], 200);
         }
 
+
+
+        $errorMessages = [];
+
+        foreach ($form->getErrors(true) as $error) {
+            $errorMessages[] = $error->getMessage();
+        }
+
         return $this->json([
             "Message" => "error occured",
-            "Error" => $form->getErrors()
+            "Error" => $errorMessages
         ], 400);
     }
 
+    #[Route("/resend-email/{id}", name: 'resend email', methods: ['GET'])]
+    public function resendConfirmationMail(User $user, Request $request): JsonResponse
+    {
+        $this->emailVerifier->sendEmailConfirmation(
+            'api_verify_email',
+            $user,
+            (new TemplatedEmail())
+                ->from(new Address('godofwar@kratos.com', 'God of war Wiki'))
+                ->to($user->getEmail())
+                ->subject('Please Confirm your Email')
+                ->htmlTemplate('confirmation_email.html.twig')
+        );
+
+        return $this->json(["Message" => "Mail was resend successfully"], 200);
+    }
+
+    #[Route('/verify/email', name: 'verify_email', methods: ['POST'])]
+    public function verifyUserEmail(
+        Request $request,
+        JWTEncoderInterface $jwtManager,
+        UserRepository $userRepository,
+    ): JsonResponse {
+        $decodedToken = $jwtManager->decode($request->cookies->get("JWT_TOKEN"));
+
+        $foundUser = $userRepository->findOneBy(["username" => $decodedToken['username']]);
+
+        if (!$foundUser) {
+            return $this->json([
+                'message' => "User is non existant",
+            ], 404);
+        }
+
+
+        try {
+            $this->emailVerifier->handleEmailConfirmation($request, $foundUser);
+        } catch (VerifyEmailExceptionInterface $exception) {
+
+            return $this->json([
+                "Message" => "User vefrification failed",
+                "error" => $exception->getReason(),
+                "url" => $request->getUri()
+            ], 400);
+        }
+
+        return $this->json(["Message" => "User verified successfully"], 200);
+    }
 }

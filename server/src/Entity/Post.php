@@ -2,12 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\PostRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PostRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
+#[Groups(["post"])]
 class Post
 {
     #[ORM\Id]
@@ -18,11 +20,14 @@ class Post
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 1024)]
+    #[ORM\Column(length: 2048)]
     private ?string $description = null;
 
     #[ORM\OneToMany(mappedBy: 'post', targetEntity: PostImages::class, orphanRemoval: true)]
     private Collection $postImages;
+
+    #[ORM\Column(length: 255)]
+    private ?string $type = null;
 
     public function __construct()
     {
@@ -84,6 +89,18 @@ class Post
                 $postImage->setPost(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }
