@@ -18,13 +18,13 @@ class Comment
     #[ORM\Column(length: 1024)]
     private ?string $text = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $commentor = null;
-
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Post $post = null;
+
+    #[ORM\ManyToOne(inversedBy: 'comments')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $owner = null;
 
     public function getId(): ?int
     {
@@ -43,18 +43,6 @@ class Comment
         return $this;
     }
 
-    public function getCommentor(): ?User
-    {
-        return $this->commentor;
-    }
-
-    public function setCommentor(User $commentor): static
-    {
-        $this->commentor = $commentor;
-
-        return $this;
-    }
-
     public function getPost(): ?Post
     {
         return $this->post;
@@ -63,6 +51,18 @@ class Comment
     public function setPost(?Post $post): static
     {
         $this->post = $post;
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): static
+    {
+        $this->owner = $owner;
 
         return $this;
     }

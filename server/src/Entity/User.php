@@ -46,9 +46,13 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column]
     private ?bool $isVerified = null;
 
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Comment::class, orphanRemoval: true)]
+    private Collection $comments;
+
     public function __construct()
     {
         $this->favouritePosts = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -173,5 +177,35 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     public function getUserIdentifier(): string
     {
         return (string) $this->id;
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getOwner() === $this) {
+                $comment->setOwner(null);
+            }
+        }
+
+        return $this;
     }
 }
