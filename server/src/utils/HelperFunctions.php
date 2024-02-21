@@ -2,7 +2,10 @@
 
 namespace App\utils;
 
+use App\Entity\User;
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 
 trait HelperFunctions
 {
@@ -24,5 +27,12 @@ trait HelperFunctions
         }
 
         return $values;
+    }
+
+    public function getUserFromToken(Request $request, JWTEncoderInterface $jwtManager, UserRepository $userRepository): User
+    {
+        $decodedToken = $jwtManager->decode($request->cookies->get("JWT_TOKEN"));
+        $user = $userRepository->findOneBy(["username" => $decodedToken["username"]]);
+        return $user;
     }
 }

@@ -86,7 +86,17 @@ class UserController extends AbstractController
 
             $jwtToken = $this->jwtManager->create($user);
 
-            $cookie = new Cookie("JWT_TOKEN", $jwtToken, strtotime("+1 hour"));
+            $cookie = new Cookie(
+                "JWT_TOKEN",
+                $jwtToken,
+                strtotime("+1 hour"),
+                "/",
+                null,
+                true,
+                true,
+                true,
+                "none"
+            );
 
             $response = $this->json([
                 'message' => "User has been registred successfully",
@@ -264,5 +274,15 @@ class UserController extends AbstractController
         }
 
         return $this->json(["Message" => "User verified successfully"], 200);
+    }
+
+    #[Route("/{id}", name: 'get_single_user', methods: ['GET'])]
+    public function getSingle(User $user): JsonResponse
+    {
+
+        return $this->json([
+            "message" => "Post was found successfully",
+            "user" => $user
+        ], 200);
     }
 }

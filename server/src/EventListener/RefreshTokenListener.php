@@ -28,6 +28,7 @@ final class RefreshTokenListener
         if (
             $request->attributes->get('_route') === 'api_create_post'
             || $request->attributes->get('_route') === 'api_verify_email'
+            || $request->attributes->get("_route") === 'api_post_favourite_post'
         ) {
             if ($request->cookies->get('JWT_TOKEN')) {
                 $jwtToken = $request->cookies->get('JWT_TOKEN');

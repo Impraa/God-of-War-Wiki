@@ -5,7 +5,10 @@ namespace App\Controller;
 use App\Entity\Post;
 use App\Entity\PostImages;
 use App\Form\CreatePostType;
+use App\Form\EditPostType;
 use App\Repository\PostRepository;
+use App\Repository\UserRepository;
+use App\utils\HelperFunctions;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,11 +22,13 @@ use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 #[Route("/api/post", name: "api_post_")]
 class PostController extends AbstractController
 {
+    use HelperFunctions;
 
     public function __construct(
         private EntityManagerInterface $entityManager,
         private PostRepository $postRepository,
         private SerializerInterface $serializer,
+        private UserRepository $userRepository,
     ) {
     }
 
@@ -124,61 +129,67 @@ class PostController extends AbstractController
         ]);
     }
 
+    #[Route("/favourite/{id}", name: "favourite_post", methods: ['POST'])]
+    public function favouritePost(Post $post, Request $request, JWTEncoderInterface $jwtManager): JsonResponse
+    {
+        $user = $this->getUserFromToken($request, $jwtManager, $this->userRepository);
+        if ($user->getFavouritePosts()->contains($post))
+            return $this->json(["message" => "Post is already favourited"], 400);
+        $user->addFavouritePost($post);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        return $this->json([
+            "message" => "Post was added to favourite successfully"
+        ], 200);
+    }
+
+
     #[Route('/edit/{id}', name: 'edit', methods: ['POST'])]
     public function editPost(Post $post, Request $request, SluggerInterface $slugger)
     {
-        $form = $this->createForm(CreatePostType::class, $post);
+        $imagesToRemove = $request->get('imagesToRemove');
+        $request->request->remove("imagesToRemove");
 
+        $form = $this->createForm(CreatePostType::class, $post);
         $form->submit($request->request->all());
 
         if ($form->isValid()) {
-            $existingImages = $post->getPostImages();
             $requestImages = $request->files->get('postImages');
 
-            $filenames = [];
-            foreach ($requestImages as $postImage) {
-                $filenames[] = $postImage->getClientOriginalName();
-            }
 
-            $existingImagesNames = [];
+            if ($imagesToRemove) {
+                foreach ($imagesToRemove as $postImage) {
+                    if (file_exists($this->getParameter('post_pictures_directory') . '/' . $postImage)) {
+                        $existingImagePath = $this->getParameter('post_pictures_directory') . '/' . $postImage;
+                        unlink($existingImagePath);
 
-            foreach ($existingImages as $existingImage) {
-                $existingImagesNames[] = $existingImage->getPostImage();
-                $existingImageName = $existingImage->getPostImage();
-
-                if (!in_array($existingImageName, $filenames)) {
-                    // Remove image not present in the request
-
-                    $existingImagePath = $this->getParameter("post_pictures_directory") . '/' . $existingImage->getPostImage();
-                    unlink($existingImagePath);
-
-                    $post->removePostImage($existingImage);
-                    $this->entityManager->remove($existingImage);
+                        $imageToDelete = $this->entityManager->getRepository(PostImages::class)->findOneBy(['postImage' => $postImage]);
+                        if ($imageToDelete) {
+                            $this->entityManager->remove($imageToDelete);
+                            $post->removePostImage($imageToDelete);
+                        }
+                    }
                 }
             }
 
             // Add new images
             foreach ($requestImages as $postImage) {
-                $imageName = $postImage->getClientOriginalName();
 
-                if (!in_array($imageName, $existingImagesNames)) {
-                    // Image is not in the collection, add it
+                $originalImageName = $postImage->getClientOriginalName();
 
-                    $originalImageName = $postImage->getClientOriginalName();
+                $safeImageName = $slugger->slug($originalImageName);
 
-                    $safeImageName = $slugger->slug($originalImageName);
+                $newImageName = $safeImageName . '-' . uniqid() . '.' . $postImage->guessExtension();
 
-                    $newImageName = $safeImageName . '-' . uniqid() . '.' . $postImage->guessExtension();
+                $postImage->move($this->getParameter("post_pictures_directory"), $newImageName);
 
-                    $postImage->move($this->getParameter("post_pictures_directory"), $newImageName);
+                $newImage = new PostImages();
+                $newImage->setPostImage($newImageName);
+                $newImage->setPost($post);
 
-                    $newImage = new PostImages();
-                    $newImage->setPostImage($newImageName);
-                    $newImage->setPost($post);
+                $this->entityManager->persist($newImage);
+                $post->addPostImage($newImage);
 
-                    $this->entityManager->persist($newImage);
-                    $post->addPostImage($newImage);
-                }
             }
 
             $this->entityManager->flush();
@@ -197,7 +208,7 @@ class PostController extends AbstractController
             return $this->json([
                 "message" => "Post was updated successfully",
                 "data" => json_decode($postData, true)
-            ]);
+            ], 200);
         }
 
         $errorMessages = [];
@@ -209,7 +220,7 @@ class PostController extends AbstractController
         return $this->json([
             "message" => "Form data was invalid",
             "error" => $errorMessages,
-        ]);
+        ], 400);
     }
 
     #[Route('/{id}', name: 'single', methods: ['GET'])]

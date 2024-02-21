@@ -24,6 +24,7 @@ final class CheckIncomingCookieListener
         if (
             $request->attributes->get("_route") === 'api_post_create'
             || $request->attributes->get('_route') === 'api_verify_email'
+            || $request->attributes->get("_route") === 'api_post_favourite_post'
         ) {
             $jwtToken = $request->cookies->get("JWT_TOKEN");
 
