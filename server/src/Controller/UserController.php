@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
@@ -33,6 +34,7 @@ class UserController extends AbstractController
         private EntityManagerInterface $entityManager,
         private JWTTokenManagerInterface $jwtManager,
         private EmailVerifier $emailVerifier,
+        private SerializerInterface $serializer,
     ) {
     }
 
@@ -166,7 +168,18 @@ class UserController extends AbstractController
             true,
             "none"
         );
-        $response = $this->json(["user" => $foundUser], 200);
+
+        $userData = json_decode($this->serializer->serialize(
+            $foundUser,
+            "json",
+            [
+                'groups' => [
+                    'user'
+                ]
+            ]
+        ), true);
+
+        $response = $this->json(["user" => $userData], 200);
 
         $response->headers->setCookie($cookie);
 
