@@ -12,8 +12,8 @@ const Card: NextPage<Props> = ({ src, alt, name }) => {
   return (
     <div className="relative rounded-tl-full rounded-br-full group w-full h-full z-10">
       <span
-        className="absolute z-10 text-primary backdrop-blur-xl w-full h-full flex items-center justify-center opacity-0 transition-opacity 
-      group-hover:opacity-100 cursor-pointer text-2xl"
+        className="absolute z-10 text-white font-fira-mono backdrop-blur-xl w-full h-full flex items-center justify-center opacity-0 transition-opacity 
+      group-hover:opacity-100 cursor-pointer text-2xl md:text-3xl"
       >
         {name}
       </span>

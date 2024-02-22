@@ -36,9 +36,9 @@ const Navbar: NextPage<Props> = ({}) => {
   return (
     <nav
       className="flex flex-col justify-center items-center w-full py-8 bg-nav-footer transition-all font-josefin-sans
-    md:flex-row md:justify-start md:py-10 md:px-10"
+    md:flex-row md:justify-start md:py-10 md:px-10 max-w-[1440px]"
     >
-      <div className="flex justify-center max-w-[1440px]  items-center pb-4 lg:pb-0">
+      <div className="flex justify-center  items-center pb-4 lg:pb-0">
         <Link href="/" className=" pr-10">
           {" "}
           <Logo />{" "}
@@ -52,8 +52,7 @@ const Navbar: NextPage<Props> = ({}) => {
         className={
           isOpened
             ? "h-inherit visible opacity-100 transition-all flex flex-col md:flex-row md:justify-between md:w-full"
-            : "h-0 invisible opacity-0 transition-all flex flex-col md:opacity-1" +
-              "max-w-[1440px] "
+            : "h-0 invisible opacity-0 transition-all flex flex-col md:opacity-1"
         }
       >
         <div className="flex flex-col md:flex-row md:space-x-2">

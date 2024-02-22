@@ -37,7 +37,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-primary-background m-0 p-0 max-w-full">
+      <body className="bg-primary-background m-0 p-0 max-w-full flex flex-col items-center">
         <Navbar />
         {children}
       </body>

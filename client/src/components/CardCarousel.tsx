@@ -27,7 +27,7 @@ const images = [
 const CardCarousel: NextPage<Props> = ({}) => {
   return (
     <Carousel
-      className="flex w-full h-full py-10 md:w-[50vw]"
+      className="flex w-full h-full py-10 md:w-[50vh] lg"
       showThumbs={false}
       swipeable={false}
       autoPlay
