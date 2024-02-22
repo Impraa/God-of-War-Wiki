@@ -15,18 +15,23 @@ class Post
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["comment"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["comment"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 2048)]
+    #[Groups(["comment"])]
     private ?string $description = null;
 
     #[ORM\OneToMany(mappedBy: 'post', targetEntity: PostImages::class, orphanRemoval: true)]
+    #[Groups(["comment"])]
     private Collection $postImages;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["comment"])]
     private ?string $type = null;
 
     #[ORM\OneToMany(mappedBy: 'post', targetEntity: Comment::class, orphanRemoval: true)]

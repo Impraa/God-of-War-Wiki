@@ -18,16 +18,19 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["comment"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Email(
         message: 'The email {{ value }} is not a valid email.',
     )]
+    #[Groups(["comment"])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Length(min: 3, max: 255)]
+    #[Groups(["comment"])]
     private ?string $username = null;
 
     #[ORM\Column(length: 255)]
@@ -35,15 +38,18 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 1024, nullable: true)]
+    #[Groups(["comment"])]
     private ?string $bio = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["comment"])]
     private ?string $profilePicture = null;
 
     #[ORM\ManyToMany(targetEntity: Post::class)]
     private Collection $favouritePosts;
 
     #[ORM\Column]
+    #[Groups(["comment"])]
     private ?bool $isVerified = null;
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Comment::class, orphanRemoval: true)]

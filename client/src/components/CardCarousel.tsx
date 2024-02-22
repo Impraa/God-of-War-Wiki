@@ -1,7 +1,6 @@
 "use client";
 import { NextPage } from "next";
 import Card from "./Card";
-import { useState } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 
@@ -18,12 +17,17 @@ const images = [
     alt: "Image of Ares",
     name: "Ares",
   },
+  {
+    src: "/Zeus.png",
+    alt: "Image of zeus",
+    name: "Zeus",
+  },
 ];
 
 const CardCarousel: NextPage<Props> = ({}) => {
   return (
     <Carousel
-      className="flex w-full h-full py-5"
+      className="flex w-full h-full py-10 md:w-[50vw]"
       showThumbs={false}
       swipeable={false}
       autoPlay

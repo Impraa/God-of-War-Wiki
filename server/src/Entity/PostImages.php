@@ -13,11 +13,11 @@ class PostImages
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["post_image"])]
+    #[Groups(["post_image", "comment"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["post_image"])]
+    #[Groups(["post_image", "comment"])]
     private ?string $postImage = null;
 
     #[ORM\ManyToOne(inversedBy: 'postImages', cascade: ['persist'])]

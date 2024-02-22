@@ -29,7 +29,7 @@ class CommentController extends AbstractController
     ) {
     }
 
-    #[Route('/create/{id}', name: 'create')]
+    #[Route('/{id}', name: 'create', methods: 'POST')]
     public function create(Post $post, Request $request): JsonResponse
     {
         $comment = new Comment();
@@ -39,7 +39,7 @@ class CommentController extends AbstractController
         if ($form->isValid()) {
             $user = $this->getUserFromToken($request, $this->jwtEncoder, $this->userRepository);
 
-            $comment->setCommentor($user);
+            $comment->setOwner($user);
             $comment->setPost($post);
 
             $this->entityManager->persist($comment);
@@ -47,13 +47,11 @@ class CommentController extends AbstractController
 
 
             $commentData = json_decode($this->serializer->serialize(
-                $comment,
+                $form->getData(),
                 "json",
                 [
                     'groups' => [
                         'comment',
-                        'user',
-                        'post'
                     ]
                 ]
             ), true);
@@ -74,5 +72,27 @@ class CommentController extends AbstractController
             "message" => "Form data invalid or missing data",
             "errors" => $errorMessages,
         ], 403);
+    }
+
+    #[Route("/{id}", name: "delete", methods: "DELETE")]
+    public function delete(Comment $comment, Request $request): JsonResponse
+    {
+        $this->entityManager->remove($comment);
+        $this->entityManager->flush();
+
+        $commentData = json_decode($this->serializer->serialize(
+            $comment,
+            "json",
+            [
+                'groups' => [
+                    'comment',
+                ]
+            ]
+        ), true);
+
+        return $this->json([
+            "message" => "Comment was deleted successfully",
+            "deletedData" => $commentData
+        ], 200);
     }
 }

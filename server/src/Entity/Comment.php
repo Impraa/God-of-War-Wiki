@@ -13,9 +13,11 @@ class Comment
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["user", "post"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 1024)]
+    #[Groups(["user", "post"])]
     private ?string $text = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]

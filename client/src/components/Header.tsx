@@ -5,10 +5,10 @@ interface Props {}
 const Header: NextPage<Props> = ({}) => {
   return (
     <div className="flex flex-col items-center space-y-5">
-      <h1 className="text-primary text-2xl border-b-2 border-primary pb-6">
+      <h1 className="text-primary text-2xl border-b-2 border-primary pb-6 font-josefin-sans md:text-3xl">
         Welcome to God of war wiki
       </h1>
-      <p className="text-primary-text font-fira-mono px-4">
+      <p className="text-primary-text font-fira-mono px-4 md:text-lg">
         Dive into the immersive world of God of War with our expansive
         encyclopedia. Uncover the secrets of Greek and Norse mythology, navigate
         treacherous landscapes, and witness Kratos&lsquo; evolution from a

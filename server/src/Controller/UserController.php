@@ -174,7 +174,7 @@ class UserController extends AbstractController
             "json",
             [
                 'groups' => [
-                    'user'
+                    'user',
                 ]
             ]
         ), true);

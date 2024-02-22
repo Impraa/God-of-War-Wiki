@@ -1,7 +1,6 @@
 "use client";
 import { NextPage } from "next";
 import Image from "next/image";
-import { useState, useEffect } from "react";
 
 interface Props {
   src: string;
@@ -10,21 +9,6 @@ interface Props {
 }
 
 const Card: NextPage<Props> = ({ src, alt, name }) => {
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
-
-  const handleResize = () => {
-    const newWidth = window.innerWidth;
-    setWidth(newWidth);
-    const newHeight = window.innerHeight;
-    setHeight(newHeight);
-  };
-
-  useEffect(() => {
-    handleResize();
-    window.addEventListener("resize", handleResize, false);
-  }, [width, height]);
-
   return (
     <div className="relative rounded-tl-full rounded-br-full group w-full h-full z-10">
       <span
@@ -34,9 +18,10 @@ const Card: NextPage<Props> = ({ src, alt, name }) => {
         {name}
       </span>
       <Image
-        className="w-full h-full z-0 "
-        width={width}
-        height={height}
+        className={"z-0"}
+        width={320}
+        quality={100}
+        height={485}
         src={src}
         alt={alt}
       />
