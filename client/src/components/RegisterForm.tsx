@@ -36,11 +36,13 @@ const RegisterForm: NextPage<Props> = ({}) => {
 
   const submitHandle = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
   };
 
   return (
-    <form className="flex flex-col items-center" onSubmit={submitHandle}>
+    <form
+      className="flex flex-col items-center border-b-2 border-primary pb-5"
+      onSubmit={submitHandle}
+    >
       {formFields.map((item, i) => {
         return <BetterInput key={i} setState={setFormData} {...item} />;
       })}

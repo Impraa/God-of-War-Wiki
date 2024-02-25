@@ -22,9 +22,16 @@ const BetterInput: NextPage<Props> = ({ setState, label, name }) => {
   };
 
   return (
-    <div className="relative flex flex-col justify-center first:pt-10 first:pb-5 py-5 group">
+    <div className="flex flex-col justify-center first:pt-10 first:pb-5 py-5">
+      <label
+        className="pl-2  text-primary-text pb-4 font-fira-mono font-medium"
+        htmlFor={name}
+      >
+        {label}
+      </label>
       <input
-        className="font-fira-mono border-4 border-primary rounded-full  bg-[#887777] text-white outline-none px-5 py-3 peer"
+        className="font-fira-mono border-2 border-primary rounded-full bg-[#EDDBDB] text-[#332f2f] font-medium outline-none px-5 py-3
+        transition-all hover:scale-125 focus:scale-125"
         onChange={handleChange}
         id={name}
         name={name}
@@ -35,12 +42,6 @@ const BetterInput: NextPage<Props> = ({ setState, label, name }) => {
         }
         required
       />
-      <label
-        className="pl-2 absolute text-primary-text font-fira-mono font-medium transition-all transform group-hover:-translate-y-11 group-focus:-translate-y-11 peer-valid:-translate-y-11"
-        htmlFor={name}
-      >
-        {label}
-      </label>
     </div>
   );
 };
