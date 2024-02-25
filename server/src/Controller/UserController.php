@@ -8,6 +8,7 @@ use App\Form\RegisterType;
 use App\Form\UpdateProfileType;
 use App\Security\EmailVerifier;
 use App\Repository\UserRepository;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Mime\Address;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -39,11 +40,15 @@ class UserController extends AbstractController
     }
 
     #[Route('/register', name: 'create_user', methods: ["POST"])]
-    public function register(
-        Request $request,
-        SluggerInterface $slugger,
-
-    ): JsonResponse {
+    public function register(Request $request, SluggerInterface $slugger): JsonResponse | RedirectResponse {
+         if($request->get('id') !== null){
+           return $this->redirectToRoute("api_register_with_google",[
+            'password' => $request->get('id'),
+        'username' => $request->get('name'),
+            'email' => $request->get('email')
+    ]);
+        } 
+    
         $user = new User();
 
         $form = $this->createForm(RegisterType::class, $user);
@@ -123,9 +128,8 @@ class UserController extends AbstractController
     }
 
     #[Route('/login', name: "login_user", methods: ["POST"])]
-    public function login(
-        Request $request,
-    ): JsonResponse {
+    public function login(Request $request): JsonResponse 
+    {
 
         $user = new User();
 
@@ -184,6 +188,11 @@ class UserController extends AbstractController
         $response->headers->setCookie($cookie);
 
         return $response;
+    }
+
+    #[Route('/registerWithGoogle', name:'register_with_google', methods:["GET"])]
+    public function registerWithGoogle(Request $request){
+        
     }
 
     #[Route("/edit/{id}", name: "edit_profile", methods: ["POST"])]
