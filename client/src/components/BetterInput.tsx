@@ -1,13 +1,14 @@
-import { RegisterUser } from "@/utils/types";
-import { NextPage } from "next";
-
-interface Props {
+interface Props<T> {
   label: string;
   name: string;
-  setState: React.Dispatch<React.SetStateAction<RegisterUser>>;
+  setState: React.Dispatch<React.SetStateAction<T>>;
 }
 
-const BetterInput: NextPage<Props> = ({ setState, label, name }) => {
+function BetterInput<T>({
+  setState,
+  label,
+  name,
+}: Props<T>): React.ReactElement {
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
@@ -15,7 +16,7 @@ const BetterInput: NextPage<Props> = ({ setState, label, name }) => {
   ) => {
     const { name, value } = e.target;
 
-    setState((prevFormData: RegisterUser) => ({
+    setState((prevFormData: T) => ({
       ...prevFormData,
       [name]: value,
     }));
@@ -44,6 +45,6 @@ const BetterInput: NextPage<Props> = ({ setState, label, name }) => {
       />
     </div>
   );
-};
+}
 
 export default BetterInput;

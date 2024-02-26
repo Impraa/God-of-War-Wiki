@@ -42,7 +42,7 @@ const Sections: NextPage<Props> = ({}) => {
     <>
       {sections.map((item, i) => {
         return (
-          <>
+          <div key={i}>
             <TextWithBackground
               key={item.textWithBackground.title}
               index={i}
@@ -60,7 +60,7 @@ const Sections: NextPage<Props> = ({}) => {
               src={item.textWithAside.src}
               alt={item.textWithAside.alt}
             />
-          </>
+          </div>
         );
       })}
     </>
