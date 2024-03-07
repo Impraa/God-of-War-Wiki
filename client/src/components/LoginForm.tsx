@@ -4,6 +4,9 @@ import { useState, ChangeEvent } from "react";
 import BetterButton from "./BetterButton";
 import BetterInput from "./BetterInput";
 import BetterCheckbox from "./BetterCheckbox";
+import { useDispatch } from "react-redux";
+import { loginUserAsync } from "@/redux/features/userSlice";
+import { useAppDispatch } from "@/redux/store";
 
 interface Props {}
 
@@ -19,20 +22,22 @@ const formFields = [
 ];
 
 const LoginForm: NextPage<Props> = ({}) => {
+  const dispatch = useAppDispatch();
+
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
   const [formData, setFormData] = useState<LoginUser>({
     password: "",
     username: "",
-    isChecked: false,
+    rememberMe: false,
   });
 
   const submitHandle = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isChecked) {
-      formData.isChecked = true;
+      formData.rememberMe = true;
     }
-    console.log(formData);
+    dispatch(loginUserAsync(formData));
   };
 
   return (

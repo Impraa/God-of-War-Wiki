@@ -135,12 +135,17 @@ class UserController extends AbstractController
     #[Route('/login', name: "login_user", methods: ["POST"])]
     public function login(Request $request): JsonResponse
     {
+        $userData = json_decode($request->getContent(), true);
+
+        $rememberMe = (bool) $userData['rememberMe'];
+
+        unset($userData['rememberMe']);
 
         $user = new User();
 
         $form = $this->createForm(LoginType::class, $user);
 
-        $form->submit($request->request->all());
+        $form->submit($userData);
 
         if (!$form->isValid()) {
 
@@ -169,7 +174,7 @@ class UserController extends AbstractController
         $cookie = new Cookie(
             "JWT_TOKEN",
             $jwtToken,
-            strtotime("+1 hour"),
+            $rememberMe ? strtotime("+30 days") : strtotime("+1 hour"),
             "/",
             null,
             true,

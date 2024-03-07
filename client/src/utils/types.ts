@@ -1,7 +1,7 @@
 export interface LoginUser {
   username: string;
   password: string;
-  isChecked: boolean;
+  rememberMe: boolean;
 }
 
 export interface RegisterUser {
@@ -21,10 +21,15 @@ export interface User {
 
 //Redux types
 
+export interface ErrorAPI {
+  message: string;
+  errors: string[];
+}
+
 export interface UserState {
   user: User;
   isLoading: boolean;
-  error: string;
+  error: ErrorAPI;
 }
 
 export interface UserAPIResponse {
