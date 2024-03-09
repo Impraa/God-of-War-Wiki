@@ -2,6 +2,7 @@ import Navbar from "@/layout/Navbar";
 import "@/app/globals.css";
 import { Metadata } from "next";
 import Provider from "./provider";
+import Footer from "@/layout/Footer";
 
 export const metadata: Metadata = {
   title: "God of war wiki",
@@ -38,10 +39,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-primary-background m-0 p-0 max-w-full flex flex-col items-center">
+      <body className="bg-primary-background m-0 p-0 max-w-full flex flex-col items-center justify-between min-h-[100vh]">
         <Provider>
           <Navbar />
           {children}
+          <Footer />
         </Provider>
       </body>
     </html>

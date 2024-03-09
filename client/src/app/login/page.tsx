@@ -1,6 +1,7 @@
 "use client";
 import LoginForm from "@/components/LoginForm";
 import { NextPage } from "next";
+import Image from "next/image";
 
 interface Props {}
 
@@ -12,6 +13,22 @@ const Page: NextPage<Props> = ({}) => {
           Login
         </h2>
         <LoginForm />
+        <Image
+          src={"/ZeusLoginFooter.png"}
+          alt="Zeus image"
+          height={290}
+          width={442}
+          quality={100}
+          className="hidden absolute bottom-0 w-64 left-0 z-0 md:block"
+        />
+        <Image
+          src={"/KratosLoginFooter.png"}
+          alt="Zeus image"
+          height={290}
+          width={442}
+          quality={100}
+          className="hidden absolute bottom-0 right-0 w-64 z-0 md:block"
+        />
       </div>
     </div>
   );

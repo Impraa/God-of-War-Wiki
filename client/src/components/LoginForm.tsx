@@ -4,7 +4,7 @@ import { useState, ChangeEvent } from "react";
 import BetterButton from "./BetterButton";
 import BetterInput from "./BetterInput";
 import BetterCheckbox from "./BetterCheckbox";
-import { useDispatch } from "react-redux";
+import { signIn } from "next-auth/react";
 import { loginUserAsync } from "@/redux/features/userSlice";
 import { useAppDispatch } from "@/redux/store";
 
@@ -41,18 +41,27 @@ const LoginForm: NextPage<Props> = ({}) => {
   };
 
   return (
-    <form
-      className="flex flex-col items-center border-b-2 border-primary pb-5"
-      onSubmit={submitHandle}
-    >
-      {formFields.map((item, i) => {
-        return <BetterInput key={i} setState={setFormData} {...item} />;
-      })}
-      <BetterCheckbox isChecked={isChecked} setIsChecked={setIsChecked} />
-      <BetterButton colorType="primary" type="submit">
-        Login
+    <>
+      <form
+        className="flex flex-col items-center border-b-2 border-primary pb-5"
+        onSubmit={submitHandle}
+      >
+        {formFields.map((item, i) => {
+          return <BetterInput key={i} setState={setFormData} {...item} />;
+        })}
+        <BetterCheckbox isChecked={isChecked} setIsChecked={setIsChecked} />
+        <BetterButton colorType="primary" type="submit">
+          Login
+        </BetterButton>
+      </form>
+      <BetterButton
+        onClick={() => signIn("google")}
+        type={"button"}
+        colorType={"google"}
+      >
+        Sign in with Google
       </BetterButton>
-    </form>
+    </>
   );
 };
 

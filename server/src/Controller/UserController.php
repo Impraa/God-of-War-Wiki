@@ -42,23 +42,23 @@ class UserController extends AbstractController
     #[Route('/register', name: 'create_user', methods: ["POST"])]
     public function register(Request $request, SluggerInterface $slugger): JsonResponse|RedirectResponse
     {
+        $userData = json_decode($request->getContent(), true);
+
         $isGoogle = false;
 
-        if ($request->get('id') !== null) {
+        if ($userData['id'] !== null) {
             $isGoogle = true;
 
-            $request->request->set('password', $request->get('id'));
-            $request->request->remove('id');
-            $request->request->set("username", $request->get('name'));
-            $request->request->remove('name');
-
+            $userData['password'] = $userData['id'];
+            $userData['username'] = $userData['name'];
+            unset($userData['id'],$userData['name']);
         }
 
         $user = new User();
 
         $form = $this->createForm(RegisterType::class, $user);
 
-        $form->submit($request->request->all());
+        $form->submit($userData);
 
         if ($form->isValid()) {
 
