@@ -4,6 +4,12 @@ import BetterInput from "./BetterInput";
 import { ChangeEvent, useState } from "react";
 import { LoginUser, RegisterUser } from "@/utils/types";
 import BetterButton from "./BetterButton";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import {
+  registerUserAsync,
+  selectCurrentUser,
+} from "@/redux/features/userSlice";
+import { useRouter } from "next/navigation";
 
 interface Props {}
 
@@ -27,6 +33,10 @@ const formFields = [
 ];
 
 const RegisterForm: NextPage<Props> = ({}) => {
+  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector(selectCurrentUser);
+  const router = useRouter();
+
   const [formData, setFormData] = useState<RegisterUser>({
     email: "",
     password: "",
@@ -36,7 +46,12 @@ const RegisterForm: NextPage<Props> = ({}) => {
 
   const submitHandle = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
+    dispatch(registerUserAsync(formData));
+    if (currentUser.id != 0) {
+      setTimeout(() => {
+        router.push("/");
+      }, 3000);
+    }
   };
 
   return (

@@ -64,6 +64,7 @@ const registerUserAsync = createAsyncThunk(
           headers: {
             "Content-type": "application/json",
           },
+          credentials: "include",
         }
       );
 
@@ -105,11 +106,24 @@ const userSlice = createSlice({
         if (isErrorAPI(action.payload)) state.error = action.payload;
         else if (typeof action.payload === "string")
           state.error.message = action.payload;
+      })
+      .addCase(registerUserAsync.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(registerUserAsync.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload;
+      })
+      .addCase(registerUserAsync.rejected, (state, action) => {
+        state.isLoading = false;
+        if (isErrorAPI(action.payload)) state.error = action.payload;
+        else if (typeof action.payload === "string")
+          state.error.message = action.payload;
       });
   },
 });
 
-export { loginUserAsync };
+export { loginUserAsync, registerUserAsync };
 export const { selectCurrentUser, selectUserError, selectUserIsLoading } =
   userSlice.selectors;
 export default userSlice.reducer;

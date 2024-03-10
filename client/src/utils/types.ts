@@ -19,6 +19,13 @@ export interface User {
   profilePicture: string;
 }
 
+export interface Post {
+  name: string;
+  description: string;
+  type: "Greek mythos" | "Nordic mythos";
+  post_image: string[];
+}
+
 //Redux types
 
 export interface ErrorAPI {
@@ -36,4 +43,16 @@ export interface UserAPIResponse {
   message: string;
   error?: string;
   user?: User;
+}
+
+export interface PostState {
+  posts: Post[];
+  isLoading: boolean;
+  error: ErrorAPI;
+}
+
+export interface PostAPIResponse {
+  message: string;
+  error?: string;
+  posts?: Post[];
 }

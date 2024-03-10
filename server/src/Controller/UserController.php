@@ -46,13 +46,15 @@ class UserController extends AbstractController
 
         $isGoogle = false;
 
-        if ($userData['id'] !== null) {
+        if (isset($userData['id']) && $userData['id'] !== null) {
             $isGoogle = true;
 
             $userData['password'] = $userData['id'];
             $userData['username'] = $userData['name'];
             unset($userData['id'],$userData['name']);
         }
+
+        unset($userData['confirmPassword']);
 
         $user = new User();
 
@@ -62,30 +64,13 @@ class UserController extends AbstractController
 
         if ($form->isValid()) {
 
-            if ($request->files->has('profilePicture')) {
-
-                $profileImage = $request->files->get('profilePicture');
-
-                $originalImageName = $profileImage->getClientOriginalName();
-
-                $safeImageName = $slugger->slug($originalImageName);
-
-                $newImageName = $safeImageName . '-' . uniqid() . '.' . $profileImage->guessExtension();
-
-                $profileImage->move($this->getParameter("profile_pictures_directory"), $newImageName);
-
-                $user->setProfilePicture($newImageName);
-
-            }
-
             $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
 
             $user->setIsVerified($isGoogle);
+           $this->entityManager->persist($user);
+           $this->entityManager->flush();
 
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
-
-            $this->emailVerifier->sendEmailConfirmation(
+             $this->emailVerifier->sendEmailConfirmation(
                 'api_verify_email',
                 $user,
                 (new TemplatedEmail())
@@ -94,8 +79,8 @@ class UserController extends AbstractController
                     ->subject('Please Confirm your Email')
                     ->htmlTemplate('confirmation_email.html.twig')
             );
-
-
+            
+      
             $jwtToken = $this->jwtManager->create($user);
 
             $cookie = new Cookie(
@@ -108,14 +93,14 @@ class UserController extends AbstractController
                 true,
                 true,
                 "none"
-            );
+            ); 
 
             $response = $this->json([
                 'message' => "User has been registred successfully",
                 "user" => $user
             ], 201);
 
-            $response->headers->setCookie($cookie);
+            $response->headers->setCookie($cookie); 
 
             return $response;
         }

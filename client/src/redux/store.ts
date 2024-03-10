@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import userReducer from "./features/userSlice";
 import logger from "redux-logger";
 import { thunk } from "redux-thunk";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import postsSlice from "./features/postsSlice";
+import userSlice from "./features/userSlice";
 
 const reducer = {
-  user: userReducer,
+  user: userSlice,
+  posts: postsSlice,
 };
 
 export const store = configureStore({
