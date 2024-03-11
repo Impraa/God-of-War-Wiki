@@ -34,7 +34,7 @@ export interface ErrorAPI {
 }
 
 export interface UserState {
-  user: User;
+  user: User | null;
   isLoading: boolean;
   error: ErrorAPI;
 }

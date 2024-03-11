@@ -47,7 +47,7 @@ const RegisterForm: NextPage<Props> = ({}) => {
   const submitHandle = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(registerUserAsync(formData));
-    if (currentUser.id != 0) {
+    if (currentUser) {
       setTimeout(() => {
         router.push("/");
       }, 3000);

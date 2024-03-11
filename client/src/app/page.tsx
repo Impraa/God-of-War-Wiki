@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Sections from "@/components/Sections";
 
 import { NextPage } from "next";
+import { useEffect } from "react";
 
 interface Props {}
 

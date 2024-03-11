@@ -1,7 +1,10 @@
 "use client";
 import Hamburger from "@/assets/Hamburger";
 import Logo from "@/assets/Logo";
+import UserIcon from "@/assets/UserIcon";
 import NavItems from "@/components/NavItems";
+import { selectCurrentUser } from "@/redux/features/userSlice";
+import { useAppSelector } from "@/redux/store";
 import { NextPage } from "next";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -19,6 +22,7 @@ const authItems = [
 ];
 
 const Navbar: NextPage<Props> = ({}) => {
+  const user = useAppSelector(selectCurrentUser);
   const [width, setWidth] = useState(0);
   const [isOpened, setIsOpened] = useState<boolean>(false);
 
@@ -61,9 +65,20 @@ const Navbar: NextPage<Props> = ({}) => {
           })}
         </div>
         <div className="flex flex-col md:flex-row md:space-x-2">
-          {authItems.map((item, i) => {
-            return <NavItems key={i} {...item} />;
-          })}
+          {user ? (
+            <>
+              <NavItems
+                key={user.id}
+                link={`/profile/${user.id}`}
+                text={user.username}
+              />
+              <UserIcon />
+            </>
+          ) : (
+            authItems.map((item, i) => {
+              return <NavItems key={i} {...item} />;
+            })
+          )}
         </div>
       </div>
     </nav>

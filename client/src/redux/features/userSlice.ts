@@ -6,16 +6,10 @@ import {
   UserAPIResponse,
   UserState,
 } from "@/utils/types";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState: UserState = {
-  user: {
-    id: 0,
-    email: "",
-    username: "",
-    profilePicture: "",
-    bio: "",
-  },
+  user: null,
   isLoading: false,
   error: {
     errors: [],
@@ -38,7 +32,6 @@ const loginUserAsync = createAsyncThunk(
           credentials: "include",
         }
       );
-
       const data: UserAPIResponse = await response.json();
 
       if (response.status !== 200) {

@@ -1,12 +1,13 @@
-import { LoginUser, RegisterUser } from "@/utils/types";
+import { LoginUser } from "@/utils/types";
 import { NextPage } from "next";
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import BetterButton from "./BetterButton";
 import BetterInput from "./BetterInput";
 import BetterCheckbox from "./BetterCheckbox";
 import { signIn } from "next-auth/react";
-import { loginUserAsync } from "@/redux/features/userSlice";
-import { useAppDispatch } from "@/redux/store";
+import { loginUserAsync, selectCurrentUser } from "@/redux/features/userSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useRouter } from "next/navigation";
 
 interface Props {}
 
@@ -23,8 +24,9 @@ const formFields = [
 
 const LoginForm: NextPage<Props> = ({}) => {
   const dispatch = useAppDispatch();
-
+  const user = useAppSelector(selectCurrentUser);
   const [isChecked, setIsChecked] = useState<boolean>(false);
+  const router = useRouter();
 
   const [formData, setFormData] = useState<LoginUser>({
     password: "",
@@ -39,6 +41,12 @@ const LoginForm: NextPage<Props> = ({}) => {
     }
     dispatch(loginUserAsync(formData));
   };
+
+  useEffect(() => {
+    if (user != null) {
+      router.push("/");
+    }
+  }, [user]);
 
   return (
     <>
