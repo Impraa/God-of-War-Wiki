@@ -8,16 +8,17 @@ use App\Form\RegisterType;
 use App\Form\UpdateProfileType;
 use App\Security\EmailVerifier;
 use App\Repository\UserRepository;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Mime\Address;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
@@ -183,6 +184,48 @@ class UserController extends AbstractController
         $response->headers->setCookie($cookie);
 
         return $response;
+    }
+
+    #[Route("/refresh-token", "refresh_token",methods:["POST"])]
+    public function refreshToken(Request $request,JWTEncoderInterface $jwtEncoder):JsonResponse
+    {
+        try {
+            $userData = $jwtEncoder->decode($request->cookies->get("JWT_TOKEN"));
+
+            $foundUser = $this->userRepository->findOneBy(["username" => $userData["username"]]);
+            if(!$foundUser){
+
+                $response = $this->json(["message" => "User was not found please try again"],404);
+
+                $response->headers->clearCookie("JWT_TOKEN");
+
+                return $response;
+            }
+
+            $newJWTToken = $this->jwtManager->create($foundUser);
+
+            $newJWTTokenCookie = new Cookie('JWT_TOKEN',$newJWTToken,strtotime("+1hour"),"/",null,true,true,true,"none");
+
+            $response = $this->json(["message" => "Token refreshed successfully"],200);
+
+            $response->headers->setCookie($newJWTTokenCookie);
+
+            if($request->cookies->get("JWT_TOKEN"))$response->headers->clearCookie("was_token_present");
+
+            return $response;
+
+        } catch (\Exception $e) {
+
+            $response = $this->json(["message" => "Your token is invalid"], Response::HTTP_BAD_REQUEST);
+
+            if($request->cookies->get("JWT_TOKEN"))$response->headers->clearCookie("JWT_TOKEN");
+
+            $wasTokenPresentCookie = new Cookie('was_token_present',"false",strtotime("+1hour"),"/",null,true,false,true,"none");
+
+            $response->headers->setCookie($wasTokenPresentCookie);
+
+            return $response;
+        }
     }
 
     #[Route("/edit/{id}", name: "edit_profile", methods: ["POST"])]

@@ -9,11 +9,11 @@ interface Props {
 const Hydration: NextPage<Props> = ({ children }) => {
   const pathname = usePathname();
 
-  useEffect(() => {
-    const cleanup = () => {
-      console.log("Cleaning up before reload");
-    };
+  const cleanup = () => {
+    console.log("Cleaning up before reload");
+  };
 
+  useEffect(() => {
     window.addEventListener("beforeunload", cleanup);
   }, [pathname]);
 
