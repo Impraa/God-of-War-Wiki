@@ -52,7 +52,7 @@ class UserController extends AbstractController
 
             $userData['password'] = $userData['id'];
             $userData['username'] = $userData['name'];
-            unset($userData['id'],$userData['name']);
+            unset($userData['id'], $userData['name']);
         }
 
         unset($userData['confirmPassword']);
@@ -68,10 +68,10 @@ class UserController extends AbstractController
             $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
 
             $user->setIsVerified($isGoogle);
-           $this->entityManager->persist($user);
-           $this->entityManager->flush();
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
 
-             $this->emailVerifier->sendEmailConfirmation(
+            $this->emailVerifier->sendEmailConfirmation(
                 'api_verify_email',
                 $user,
                 (new TemplatedEmail())
@@ -80,8 +80,8 @@ class UserController extends AbstractController
                     ->subject('Please Confirm your Email')
                     ->htmlTemplate('confirmation_email.html.twig')
             );
-            
-      
+
+
             $jwtToken = $this->jwtManager->create($user);
 
             $cookie = new Cookie(
@@ -94,14 +94,14 @@ class UserController extends AbstractController
                 true,
                 true,
                 "none"
-            ); 
+            );
 
             $response = $this->json([
                 'message' => "User has been registred successfully",
                 "user" => $user
             ], 201);
 
-            $response->headers->setCookie($cookie); 
+            $response->headers->setCookie($cookie);
 
             return $response;
         }
@@ -186,16 +186,16 @@ class UserController extends AbstractController
         return $response;
     }
 
-    #[Route("/refresh-token", "refresh_token",methods:["POST"])]
-    public function refreshToken(Request $request,JWTEncoderInterface $jwtEncoder):JsonResponse
+    #[Route("/refresh-token", "refresh_token", methods: ["GET"])]
+    public function refreshToken(Request $request, JWTEncoderInterface $jwtEncoder): JsonResponse
     {
         try {
             $userData = $jwtEncoder->decode($request->cookies->get("JWT_TOKEN"));
 
             $foundUser = $this->userRepository->findOneBy(["username" => $userData["username"]]);
-            if(!$foundUser){
+            if (!$foundUser) {
 
-                $response = $this->json(["message" => "User was not found please try again"],404);
+                $response = $this->json(["message" => "User was not found please try again"], 404);
 
                 $response->headers->clearCookie("JWT_TOKEN");
 
@@ -204,13 +204,14 @@ class UserController extends AbstractController
 
             $newJWTToken = $this->jwtManager->create($foundUser);
 
-            $newJWTTokenCookie = new Cookie('JWT_TOKEN',$newJWTToken,strtotime("+1hour"),"/",null,true,true,true,"none");
+            $newJWTTokenCookie = new Cookie('JWT_TOKEN', $newJWTToken, strtotime("+1hour"), "/", null, true, true, true, "none");
 
-            $response = $this->json(["message" => "Token refreshed successfully"],200);
+            $response = $this->json(["message" => "Token refreshed successfully"], 200);
 
             $response->headers->setCookie($newJWTTokenCookie);
 
-            if($request->cookies->get("JWT_TOKEN"))$response->headers->clearCookie("was_token_present");
+            if ($request->cookies->get("JWT_TOKEN"))
+                $response->headers->clearCookie("was_token_present");
 
             return $response;
 
@@ -218,9 +219,10 @@ class UserController extends AbstractController
 
             $response = $this->json(["message" => "Your token is invalid"], Response::HTTP_BAD_REQUEST);
 
-            if($request->cookies->get("JWT_TOKEN"))$response->headers->clearCookie("JWT_TOKEN");
+            if ($request->cookies->get("JWT_TOKEN"))
+                $response->headers->clearCookie("JWT_TOKEN");
 
-            $wasTokenPresentCookie = new Cookie('was_token_present',"false",strtotime("+1hour"),"/",null,true,false,true,"none");
+            $wasTokenPresentCookie = new Cookie('was_token_present', "false", strtotime("+1hour"), "/", null, true, false, false, "none");
 
             $response->headers->setCookie($wasTokenPresentCookie);
 
