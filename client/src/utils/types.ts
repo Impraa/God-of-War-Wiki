@@ -36,6 +36,8 @@ export interface ErrorAPI {
 export interface UserState {
   user: User | null;
   isLoading: boolean;
+  wasTokenChecked: boolean;
+  lastChecked: Date | null;
   error: ErrorAPI;
 }
 

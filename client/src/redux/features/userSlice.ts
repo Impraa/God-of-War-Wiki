@@ -11,6 +11,8 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 const initialState: UserState = {
   user: null,
   isLoading: false,
+  wasTokenChecked: false,
+  lastChecked: null,
   error: {
     errors: [],
     message: "",
@@ -104,11 +106,19 @@ const refreshTokenAsync = createAsyncThunk(
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    logoutUser(state) {
+      state.user = null;
+      state.lastChecked = new Date();
+      state.wasTokenChecked = true;
+    },
+  },
   selectors: {
     selectCurrentUser: (state) => state.user,
     selectUserError: (state) => state.error,
     selectUserIsLoading: (state) => state.isLoading,
+    selectWasTokenChecked: (state) => state.wasTokenChecked,
+    selectLastChecked: (state) => state.lastChecked,
   },
   extraReducers: (builder) => {
     builder
@@ -140,6 +150,8 @@ const userSlice = createSlice({
       })
       .addCase(refreshTokenAsync.rejected, (state, action) => {
         state.isLoading = false;
+        state.wasTokenChecked = true;
+        state.lastChecked = new Date(Date.now());
         if (isErrorAPI(action.payload)) state.error = action.payload;
         else if (typeof action.payload === "string")
           state.error.message = action.payload;
@@ -149,11 +161,19 @@ const userSlice = createSlice({
       })
       .addCase(refreshTokenAsync.fulfilled, (state) => {
         state.isLoading = false;
+        state.wasTokenChecked = true;
+        state.lastChecked = new Date(Date.now());
       });
   },
 });
 
 export { loginUserAsync, registerUserAsync, refreshTokenAsync };
-export const { selectCurrentUser, selectUserError, selectUserIsLoading } =
-  userSlice.selectors;
+export const { logoutUser } = userSlice.actions;
+export const {
+  selectCurrentUser,
+  selectUserError,
+  selectUserIsLoading,
+  selectLastChecked,
+  selectWasTokenChecked,
+} = userSlice.selectors;
 export default userSlice.reducer;

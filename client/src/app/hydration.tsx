@@ -1,30 +1,46 @@
 "use client";
-import Cookies from "js-cookie";
-import { refreshTokenAsync } from "@/redux/features/userSlice";
-import { useAppDispatch } from "@/redux/store";
+import {
+  refreshTokenAsync,
+  selectLastChecked,
+  selectWasTokenChecked,
+} from "@/redux/features/userSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { NextPage } from "next";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useCookies } from "react-cookie";
+import { usePathname } from "next/navigation";
+import { useLayoutEffect } from "react";
+
 interface Props {
   children: React.ReactNode;
 }
 
 const Hydration: NextPage<Props> = ({ children }) => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
   const pathname = usePathname();
-  const [cookie] = useCookies(["was_token_present"]);
+  const wasTokenChecked = useAppSelector(selectWasTokenChecked);
+  const lastChecked = useAppSelector(selectLastChecked);
 
-  const cleanup = () => {
-    router.refresh();
+  const checkUserSession = () => {
     dispatch(refreshTokenAsync(null));
-    console.log("Cleaning up before reload");
   };
 
-  useEffect(() => {
-    window.addEventListener("beforeunload", cleanup);
-  }, [pathname, cookie]);
+  useLayoutEffect(() => {
+    if (
+      !wasTokenChecked ||
+      (lastChecked &&
+        new Date(
+          new Date().toLocaleString("en-US", {
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          })
+        ).getSeconds() -
+          new Date(
+            new Date(lastChecked!).toLocaleString("en-US", {
+              timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            })
+          ).getSeconds() >
+          2 * 60 * 60 * 1000)
+    )
+      checkUserSession();
+  }, [pathname]);
 
   return <>{children}</>;
 };

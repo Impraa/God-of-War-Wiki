@@ -16,13 +16,13 @@ const persistConfig = {
 };
 
 const userPersistConfig = {
-  key: "root",
+  key: "user",
   storage,
-  whitelist: ["token"],
+  whitelist: ["user", "wasTokenChecked", "lastChecked"],
 };
 
 const postsPersistConfig = {
-  key: "root",
+  key: "posts",
   storage,
   whitelist: ["posts"],
 };

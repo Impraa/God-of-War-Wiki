@@ -47,7 +47,7 @@ class UserController extends AbstractController
 
         $isGoogle = false;
 
-        if (isset($userData['id']) && $userData['id'] !== null) {
+        if (isset ($userData['id']) && $userData['id'] !== null) {
             $isGoogle = true;
 
             $userData['password'] = $userData['id'];
@@ -210,9 +210,6 @@ class UserController extends AbstractController
 
             $response->headers->setCookie($newJWTTokenCookie);
 
-            if ($request->cookies->get("JWT_TOKEN"))
-                $response->headers->clearCookie("was_token_present");
-
             return $response;
 
         } catch (\Exception $e) {
@@ -221,10 +218,6 @@ class UserController extends AbstractController
 
             if ($request->cookies->get("JWT_TOKEN"))
                 $response->headers->clearCookie("JWT_TOKEN");
-
-            $wasTokenPresentCookie = new Cookie('was_token_present', "false", strtotime("+1hour"), "/", null, true, false, false, "none");
-
-            $response->headers->setCookie($wasTokenPresentCookie);
 
             return $response;
         }
