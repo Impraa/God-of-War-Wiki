@@ -32,7 +32,7 @@ class PostController extends AbstractController
     ) {
     }
 
-    #[Route('/getAll', name: 'all',methods:['POST'])]
+    #[Route('/getAll', name: 'all', methods: ['POST'])]
     public function getAllPosts(): JsonResponse
     {
         $posts = $this->postRepository->findAll();

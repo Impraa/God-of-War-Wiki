@@ -2,14 +2,23 @@ import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import BetterButton from "./BetterButton";
 import SearchIcon from "@/assets/SearchIcon";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import {
+  fetchAllPostsAsync,
+  selectAllPosts,
+} from "@/redux/features/postsSlice";
 
 interface Props {}
 
 const SerachIsland: NextPage<Props> = ({}) => {
+  const dispatch = useAppDispatch();
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [sort, setSort] = useState<"ASC" | "DESC" | "">("");
+  const [filter, setFilter] = useState<"" | "greekMythos" | "nordicMythos">("");
 
-  useEffect(() => {}, []);
-
+  useEffect(() => {
+    dispatch(fetchAllPostsAsync());
+  }, []);
   return (
     <div className="border-b-4 border-primary pb-10 md:w-[90vw] flex flex-col items-center">
       <form className="flex space-x-5 font-fira-mono justify-center">

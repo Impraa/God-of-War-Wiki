@@ -1,4 +1,5 @@
 "use client";
+import AllGodsCards from "@/components/AllGodsCards";
 import SerachIsland from "@/components/SerachIsland";
 import { NextPage } from "next";
 
@@ -8,6 +9,7 @@ const Page: NextPage<Props> = ({}) => {
   return (
     <div className=" flex-grow">
       <SerachIsland />
+      <AllGodsCards />
     </div>
   );
 };

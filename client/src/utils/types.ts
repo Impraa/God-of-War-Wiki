@@ -20,10 +20,16 @@ export interface User {
 }
 
 export interface Post {
+  id: number;
   name: string;
   description: string;
   type: "Greek mythos" | "Nordic mythos";
-  post_image: string[];
+  postImages: [{ id: number; postImage: string }];
+}
+
+export interface Comment {
+  id: number;
+  text: string;
 }
 
 //Redux types

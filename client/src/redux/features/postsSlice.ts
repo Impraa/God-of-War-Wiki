@@ -16,9 +16,9 @@ const fetchAllPostsAsync = createAsyncThunk(
   async (options, thunkAPI) => {
     try {
       const response = await fetch(
-        process.env.BACKEND_URL ?? "http://127.0.0.1:8000/api" + "/getAll",
+        process.env.BACKEND_URL ?? "http://127.0.0.1:8000/api" + "/post/getAll",
         {
-          method: "GET",
+          method: "POST",
           headers: {
             "Content-type": "application/json",
           },
