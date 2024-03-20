@@ -33,9 +33,11 @@ class PostController extends AbstractController
     }
 
     #[Route('/getAll', name: 'all', methods: ['POST'])]
-    public function getAllPosts(): JsonResponse
+    public function getAllPosts(Request $request): JsonResponse
     {
-        $posts = $this->postRepository->findAll();
+        $options = json_decode($request->getContent(), true);
+
+        $posts = $this->postRepository->getPostsByCriteria($options);
 
         $postsData = $this->serializer->serialize(
             $posts,

@@ -21,7 +21,21 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
     }
 
-//    /**
+    public function getPostsByCriteria(array $criteria)
+    {
+        $sqlQuery = $this->createQueryBuilder('p');
+
+        if (isset ($criteria['searchQuery']))
+            $sqlQuery->where('p.name like :name')->setParameter(':name', $criteria['searchQuery']);
+        if (isset ($criteria['sort']))
+            $sqlQuery->orderBy('p.name', $criteria['sort']);
+        if (isset ($criteria['filter']))
+            $sqlQuery->where('p.type like :type')->setParameter(':type', $criteria['filter']);
+
+        return $sqlQuery->getQuery()->getResult();
+    }
+
+    //    /**
 //     * @return Post[] Returns an array of Post objects
 //     */
 //    public function findByExampleField($value): array
@@ -36,7 +50,7 @@ class PostRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Post
+    //    public function findOneBySomeField($value): ?Post
 //    {
 //        return $this->createQueryBuilder('p')
 //            ->andWhere('p.exampleField = :val')
