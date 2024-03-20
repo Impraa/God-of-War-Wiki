@@ -7,7 +7,7 @@ interface Props {}
 
 const Page: NextPage<Props> = ({}) => {
   return (
-    <div className=" flex-grow">
+    <div className="flex flex-col items-center">
       <SerachIsland />
       <AllGodsCards />
     </div>

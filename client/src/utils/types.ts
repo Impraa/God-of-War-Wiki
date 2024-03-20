@@ -63,4 +63,5 @@ export interface PostAPIResponse {
   message: string;
   error?: string;
   posts?: Post[];
+  post?: Post;
 }
