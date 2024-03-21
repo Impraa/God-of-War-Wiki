@@ -32,6 +32,12 @@ export interface Comment {
   text: string;
 }
 
+export interface Options {
+  sort?: "ASC" | "DESC";
+  searchQuery?: string;
+  filter?: "greekMythos" | "nordicMythos";
+}
+
 //Redux types
 
 export interface ErrorAPI {
@@ -55,6 +61,7 @@ export interface UserAPIResponse {
 
 export interface PostState {
   posts: Post[];
+  post: Post | null;
   isLoading: boolean;
   error: ErrorAPI;
 }

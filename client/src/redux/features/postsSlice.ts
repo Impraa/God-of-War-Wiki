@@ -1,10 +1,11 @@
 import { isErrorAPI } from "@/utils/helperFunction";
-import { PostAPIResponse, PostState } from "@/utils/types";
+import { Options, PostAPIResponse, PostState } from "@/utils/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState: PostState = {
   posts: [],
   isLoading: false,
+  post: null,
   error: {
     errors: [],
     message: "",
@@ -13,12 +14,14 @@ const initialState: PostState = {
 
 const fetchAllPostsAsync = createAsyncThunk(
   "posts/fetchAllPosts",
-  async (options, thunkAPI) => {
+  async (options: Options, thunkAPI) => {
     try {
+      console.log(options);
       const response = await fetch(
         process.env.BACKEND_URL ?? "http://127.0.0.1:8000/api" + "/post/getAll",
         {
           method: "POST",
+          body: JSON.stringify(options),
           headers: {
             "Content-type": "application/json",
           },
@@ -29,11 +32,13 @@ const fetchAllPostsAsync = createAsyncThunk(
       const data: PostAPIResponse = await response.json();
 
       if (response.status !== 200) {
+        console.log(data.error);
         return thunkAPI.rejectWithValue(data);
       }
 
       return thunkAPI.fulfillWithValue(data.posts!);
     } catch (error) {
+      console.log(error);
       return thunkAPI.rejectWithValue(error);
     }
   }
@@ -71,8 +76,9 @@ const postsSlice = createSlice({
   reducers: {},
   selectors: {
     selectAllPosts: (state) => state.posts,
-    selectUserError: (state) => state.error,
-    selectUserIsLoading: (state) => state.isLoading,
+    selectPostError: (state) => state.error,
+    selectPostIsLoading: (state) => state.isLoading,
+    selectSinglePost: (state) => state.post,
   },
   extraReducers: (builder) => {
     builder
@@ -94,7 +100,7 @@ const postsSlice = createSlice({
       })
       .addCase(fetchPostAsync.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.posts.push(action.payload);
+        state.post = action.payload;
       })
       .addCase(fetchPostAsync.rejected, (state, action) => {
         state.isLoading = false;
@@ -106,6 +112,10 @@ const postsSlice = createSlice({
 });
 
 export { fetchAllPostsAsync, fetchPostAsync };
-export const { selectAllPosts, selectUserError, selectUserIsLoading } =
-  postsSlice.selectors;
+export const {
+  selectAllPosts,
+  selectPostError,
+  selectPostIsLoading,
+  selectSinglePost,
+} = postsSlice.selectors;
 export default postsSlice.reducer;

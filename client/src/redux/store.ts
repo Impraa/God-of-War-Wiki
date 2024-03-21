@@ -24,7 +24,7 @@ const userPersistConfig = {
 const postsPersistConfig = {
   key: "posts",
   storage,
-  whitelist: ["posts"],
+  whitelist: [],
 };
 
 const rootReducer = combineReducers({

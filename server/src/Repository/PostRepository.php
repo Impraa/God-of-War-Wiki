@@ -25,14 +25,14 @@ class PostRepository extends ServiceEntityRepository
     {
         $sqlQuery = $this->createQueryBuilder('p');
 
-        if (isset ($criteria['searchQuery']))
-            $sqlQuery->where('p.name like :name')->setParameter(':name', $criteria['searchQuery']);
+        if (isset ($criteria['searchQuery']) && $criteria['searchQuery'] != '')
+            $sqlQuery->andWhere('p.name like :name')->setParameter(':name', $criteria['searchQuery']);
+        if (isset ($criteria['filter']))
+            $sqlQuery->andWhere('p.type like :type')->setParameter(':type', $criteria['filter']);
         if (isset ($criteria['sort']))
             $sqlQuery->orderBy('p.name', $criteria['sort']);
-        if (isset ($criteria['filter']))
-            $sqlQuery->where('p.type like :type')->setParameter(':type', $criteria['filter']);
 
-        return $sqlQuery->getQuery()->getResult();
+        return $sqlQuery->getQuery()->execute();
     }
 
     //    /**
