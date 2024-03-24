@@ -49,7 +49,7 @@ const loginUserAsync = createAsyncThunk(
 
 const registerUserAsync = createAsyncThunk(
   "user/registerUser",
-  async (user: RegisterUser, thunkApi) => {
+  async (user: RegisterUser | User, thunkApi) => {
     try {
       const response = await fetch(
         process.env.BACKEND_URL ?? "http://127.0.0.1:8000/api" + "/register",

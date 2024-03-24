@@ -8,8 +8,10 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 import {
   registerUserAsync,
   selectCurrentUser,
+  selectUserIsLoading,
 } from "@/redux/features/userSlice";
 import { useRouter } from "next/navigation";
+import ClimbingBoxLoader from "react-spinners/ClimbingBoxLoader";
 
 interface Props {}
 
@@ -35,6 +37,7 @@ const formFields = [
 const RegisterForm: NextPage<Props> = ({}) => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectCurrentUser);
+  const isLoading = useAppSelector(selectUserIsLoading);
   const router = useRouter();
 
   const [formData, setFormData] = useState<RegisterUser>({
@@ -62,9 +65,13 @@ const RegisterForm: NextPage<Props> = ({}) => {
       {formFields.map((item, i) => {
         return <BetterInput key={i} setState={setFormData} {...item} />;
       })}
-      <BetterButton colorType="primary" type="submit">
-        Register
-      </BetterButton>
+      {isLoading ? (
+        <ClimbingBoxLoader color="#F3BDBD" className="cursor-wait" />
+      ) : (
+        <BetterButton colorType="primary" type="submit">
+          Register
+        </BetterButton>
+      )}
     </form>
   );
 };

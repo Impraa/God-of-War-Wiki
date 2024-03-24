@@ -4,10 +4,14 @@ import { NextPage } from "next";
 import BetterButton from "../../components/BetterButton";
 import { signIn } from "next-auth/react";
 import RegisterAside from "@/components/RegisterAside";
+import { selectUserIsLoading } from "@/redux/features/userSlice";
+import { useAppSelector } from "@/redux/store";
 
 interface Props {}
 
 const Page: NextPage<Props> = ({}) => {
+  const isLoading = useAppSelector(selectUserIsLoading);
+
   return (
     <div>
       <div className="flex flex-col items-center md:flex-row xl:max-w-[1440px]">
@@ -21,6 +25,7 @@ const Page: NextPage<Props> = ({}) => {
             onClick={() => signIn("google")}
             type={"button"}
             colorType={"google"}
+            disable={isLoading}
           >
             Sign in with Google
           </BetterButton>

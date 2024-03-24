@@ -5,9 +5,14 @@ import BetterButton from "./BetterButton";
 import BetterInput from "./BetterInput";
 import BetterCheckbox from "./BetterCheckbox";
 import { signIn } from "next-auth/react";
-import { loginUserAsync, selectCurrentUser } from "@/redux/features/userSlice";
+import {
+  loginUserAsync,
+  selectCurrentUser,
+  selectUserIsLoading,
+} from "@/redux/features/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { useRouter } from "next/navigation";
+import { ClimbingBoxLoader } from "react-spinners";
 
 interface Props {}
 
@@ -25,6 +30,7 @@ const formFields = [
 const LoginForm: NextPage<Props> = ({}) => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectCurrentUser);
+  const isLoading = useAppSelector(selectUserIsLoading);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const router = useRouter();
 
@@ -58,14 +64,19 @@ const LoginForm: NextPage<Props> = ({}) => {
           return <BetterInput key={i} setState={setFormData} {...item} />;
         })}
         <BetterCheckbox isChecked={isChecked} setIsChecked={setIsChecked} />
-        <BetterButton colorType="primary" type="submit">
-          Login
-        </BetterButton>
+        {isLoading ? (
+          <ClimbingBoxLoader color="#F3BDBD" className="cursor-wait" />
+        ) : (
+          <BetterButton colorType="primary" type="submit">
+            Login
+          </BetterButton>
+        )}
       </form>
       <BetterButton
         onClick={() => signIn("google")}
         type={"button"}
         colorType={"google"}
+        disable={isLoading}
       >
         Sign in with Google
       </BetterButton>
