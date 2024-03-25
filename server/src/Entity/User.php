@@ -46,6 +46,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private ?string $profilePicture = null;
 
     #[ORM\ManyToMany(targetEntity: Post::class)]
+    #[Groups(['user'])]
     private Collection $favouritePosts;
 
     #[ORM\Column]

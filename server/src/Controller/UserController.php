@@ -175,6 +175,9 @@ class UserController extends AbstractController
             [
                 'groups' => [
                     'user',
+                    'post',
+                    'post_image',
+                    'comment',
                 ]
             ]
         ), true);

@@ -103,6 +103,30 @@ const refreshTokenAsync = createAsyncThunk(
   }
 );
 
+const favouritePostAsync = createAsyncThunk(
+  "user/favouritePost",
+  async (postId: number, thunkApi) => {
+    try {
+      const response = await fetch(
+        process.env.BACKEND_URL ??
+          "http://127.0.0.1:8000/api" + "/post/favourite/" + postId,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+
+      const data: UserAPIResponse = await response.json();
+
+      if (response.status !== 200) return thunkApi.rejectWithValue(data.error!);
+
+      return thunkApi.fulfillWithValue(data.user!);
+    } catch (error) {
+      thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -163,11 +187,29 @@ const userSlice = createSlice({
         state.isLoading = false;
         state.wasTokenChecked = true;
         state.lastChecked = new Date(Date.now());
+      })
+      .addCase(favouritePostAsync.rejected, (state, action) => {
+        state.isLoading = false;
+        if (isErrorAPI(action.payload)) state.error = action.payload;
+        else if (typeof action.payload === "string")
+          state.error.message = action.payload;
+      })
+      .addCase(favouritePostAsync.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(favouritePostAsync.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload!;
       });
   },
 });
 
-export { loginUserAsync, registerUserAsync, refreshTokenAsync };
+export {
+  loginUserAsync,
+  registerUserAsync,
+  refreshTokenAsync,
+  favouritePostAsync,
+};
 export const { logoutUser } = userSlice.actions;
 export const {
   selectCurrentUser,

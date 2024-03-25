@@ -79,25 +79,27 @@ class PostController extends AbstractController
         $form->submit($request->request->all());
 
         if ($form->isValid()) {
-            foreach ($request->files->get('postImages') as $postImage) {
+            if ($request->files->get('postImages')) {
+                foreach ($request->files->get('postImages') as $postImage) {
 
-                $originalImageName = $postImage->getClientOriginalName();
+                    $originalImageName = $postImage->getClientOriginalName();
 
-                $safeImageName = $sluggerInterface->slug($originalImageName);
+                    $safeImageName = $sluggerInterface->slug($originalImageName);
 
-                $newImageName = $safeImageName . '-' . uniqid() . '.' . $postImage->guessExtension();
+                    $newImageName = $safeImageName . '-' . uniqid() . '.' . $postImage->guessExtension();
 
-                $postImage->move($this->getParameter('post_pictures_directory'), $newImageName);
+                    $postImage->move($this->getParameter('post_pictures_directory'), $newImageName);
 
-                $postImageEntity = new PostImages();
+                    $postImageEntity = new PostImages();
 
-                $postImageEntity->setPostImage($newImageName);
-                $postImageEntity->setPost($post);
+                    $postImageEntity->setPostImage($newImageName);
+                    $postImageEntity->setPost($post);
 
-                $this->entityManager->persist($postImageEntity);
-                $this->entityManager->flush();
+                    $this->entityManager->persist($postImageEntity);
+                    $this->entityManager->flush();
 
-                $post->getPostImages()->add($postImageEntity);
+                    $post->getPostImages()->add($postImageEntity);
+                }
             }
 
             $this->entityManager->persist($post);
@@ -137,12 +139,25 @@ class PostController extends AbstractController
     {
         $user = $this->getUserFromToken($request, $jwtManager, $this->userRepository);
         if ($user->getFavouritePosts()->contains($post))
-            return $this->json(["message" => "Post is already favourited"], 400);
+            return $this->json(["message" => "Post is already favourited", "error" => "Post is already in favourites"], 400);
         $user->addFavouritePost($post);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+        $userData = $this->serializer->serialize(
+            $user,
+            'json',
+            [
+                'groups' => [
+                    'user',
+                    'post',
+                    'post_image',
+                    'comment',
+                ]
+            ]
+        );
         return $this->json([
-            "message" => "Post was added to favourite successfully"
+            "message" => "Post was added to favourite successfully",
+            "user" => json_decode($userData, true),
         ], 200);
     }
 
