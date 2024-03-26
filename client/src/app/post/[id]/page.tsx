@@ -52,9 +52,8 @@ const Page: NextPage<Props> = ({}) => {
               >
                 <Image
                   fill={true}
-                  objectFit="cover"
                   quality={100}
-                  className="rounded-3xl"
+                  className="rounded-3xl absolute inset-0 w-full h-full object-cover"
                   src={
                     "http://127.0.0.1:8000/uploads/post_pictures/" +
                     item.postImage

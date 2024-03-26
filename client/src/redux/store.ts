@@ -8,11 +8,12 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import postsSlice from "./features/postsSlice";
 import userSlice from "./features/userSlice";
 import storage from "./storage";
+import commentsSlice from "./features/commentsSlice";
 
 const persistConfig = {
   key: "root",
   storage,
-  blacklist: ["user", "posts"],
+  blacklist: ["user", "posts", "comments"],
 };
 
 const userPersistConfig = {
@@ -27,9 +28,16 @@ const postsPersistConfig = {
   whitelist: [],
 };
 
+const commentsPersistConfig = {
+  key: "comments",
+  storage,
+  whitelist: [],
+};
+
 const rootReducer = combineReducers({
   user: persistReducer(userPersistConfig, userSlice),
   posts: persistReducer(postsPersistConfig, postsSlice),
+  comments: persistReducer(commentsPersistConfig, commentsSlice),
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

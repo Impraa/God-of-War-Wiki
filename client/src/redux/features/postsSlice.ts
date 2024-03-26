@@ -6,10 +6,7 @@ const initialState: PostState = {
   posts: [],
   isLoading: false,
   post: null,
-  error: {
-    errors: [],
-    message: "",
-  },
+  errors: [],
 };
 
 const fetchAllPostsAsync = createAsyncThunk(
@@ -76,7 +73,7 @@ const postsSlice = createSlice({
   reducers: {},
   selectors: {
     selectAllPosts: (state) => state.posts,
-    selectPostError: (state) => state.error,
+    selectPostError: (state) => state.errors,
     selectPostIsLoading: (state) => state.isLoading,
     selectSinglePost: (state) => state.post,
   },
@@ -91,9 +88,9 @@ const postsSlice = createSlice({
       })
       .addCase(fetchAllPostsAsync.rejected, (state, action) => {
         state.isLoading = false;
-        if (isErrorAPI(action.payload)) state.error = action.payload;
+        if (isErrorAPI(action.payload)) state.errors = action.payload.errors;
         else if (typeof action.payload === "string")
-          state.error.message = action.payload;
+          state.errors.push(action.payload);
       })
       .addCase(fetchPostAsync.pending, (state) => {
         state.isLoading = true;
@@ -104,9 +101,9 @@ const postsSlice = createSlice({
       })
       .addCase(fetchPostAsync.rejected, (state, action) => {
         state.isLoading = false;
-        if (isErrorAPI(action.payload)) state.error = action.payload;
+        if (isErrorAPI(action.payload)) state.errors = action.payload.errors;
         else if (typeof action.payload === "string")
-          state.error.message = action.payload;
+          state.errors.push(action.payload);
       });
   },
 });

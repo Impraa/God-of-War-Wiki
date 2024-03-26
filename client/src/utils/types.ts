@@ -31,6 +31,7 @@ export interface Post {
 export interface Comment {
   id: number;
   text: string;
+  owner: User;
 }
 
 export interface Options {
@@ -51,7 +52,7 @@ export interface UserState {
   isLoading: boolean;
   wasTokenChecked: boolean;
   lastChecked: Date | null;
-  error: ErrorAPI;
+  errors: string[];
 }
 
 export interface UserAPIResponse {
@@ -64,7 +65,7 @@ export interface PostState {
   posts: Post[];
   post: Post | null;
   isLoading: boolean;
-  error: ErrorAPI;
+  errors: string[];
 }
 
 export interface PostAPIResponse {
@@ -72,4 +73,10 @@ export interface PostAPIResponse {
   error?: string;
   posts?: Post[];
   post?: Post;
+}
+
+export interface CommentState {
+  comments: Comment[];
+  isLoading: boolean;
+  errors: string[];
 }

@@ -58,7 +58,7 @@ class CommentController extends AbstractController
 
             return $this->json([
                 "message" => "Comment was successfully added",
-                "data" => $commentData,
+                "comemnts" => $commentData,
             ], 200);
         }
 
@@ -92,7 +92,7 @@ class CommentController extends AbstractController
 
         return $this->json([
             "message" => "Comment was deleted successfully",
-            "deletedData" => $commentData
+            "comments" => $commentData
         ], 200);
     }
 }

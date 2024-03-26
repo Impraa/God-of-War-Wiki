@@ -161,6 +161,33 @@ class PostController extends AbstractController
         ], 200);
     }
 
+    #[Route("/favourite/{id}", name: "unfavourite_post", methods: ['DELETE'])]
+    public function unfavouritePost(Post $post, Request $request, JWTEncoderInterface $jwtManager): JsonResponse
+    {
+        $user = $this->getUserFromToken($request, $jwtManager, $this->userRepository);
+        if (!$user->getFavouritePosts()->contains($post))
+            return $this->json(["message" => "Post is not favourited", "error" => "Post is not favourited"], 400);
+        $user->removeFavouritePost($post);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        $userData = $this->serializer->serialize(
+            $user,
+            'json',
+            [
+                'groups' => [
+                    'user',
+                    'post',
+                    'post_image',
+                    'comment',
+                ]
+            ]
+        );
+        return $this->json([
+            "message" => "Post was removed from favourites successfully",
+            "user" => json_decode($userData, true),
+        ], 200);
+    }
+
 
     #[Route('/edit/{id}', name: 'edit', methods: ['POST'])]
     public function editPost(Post $post, Request $request, SluggerInterface $slugger)

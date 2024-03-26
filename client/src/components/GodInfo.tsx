@@ -1,6 +1,9 @@
 import Heart from "@/assets/Heart";
 import HeartOutline from "@/assets/HeartOutline";
-import { favouritePostAsync } from "@/redux/features/userSlice";
+import {
+  favouritePostAsync,
+  unfavouritePostAsync,
+} from "@/redux/features/userSlice";
 import { useAppDispatch } from "@/redux/store";
 import { Post, User } from "@/utils/types";
 import { NextPage } from "next";
@@ -31,7 +34,10 @@ const GodInfo: NextPage<Props> = ({ post, user }) => {
   const handleHeartOutlineClick = (e: React.MouseEvent<SVGElement>) => {
     dispatch(favouritePostAsync(post.id));
   };
-  console.log(user);
+  const handleHeartClick = (e: React.MouseEvent<SVGElement>) => {
+    dispatch(unfavouritePostAsync(post.id));
+  };
+
   return (
     <div className="flex-grow flex flex-col">
       <h2 className="text-primary self-center text-2xl font-josefin-sans font-bold lg:text-4xl">
@@ -46,7 +52,10 @@ const GodInfo: NextPage<Props> = ({ post, user }) => {
           {user.favouritePosts.find(
             (favouritePost) => favouritePost.id === post.id
           ) ? (
-            <Heart className="w-[3rem] h-[3rem] text-primary" />
+            <Heart
+              onClick={handleHeartClick}
+              className="w-[3rem] h-[3rem] text-primary"
+            />
           ) : (
             <HeartOutline
               onClick={handleHeartOutlineClick}

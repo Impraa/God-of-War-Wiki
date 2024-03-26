@@ -13,10 +13,7 @@ const initialState: UserState = {
   isLoading: false,
   wasTokenChecked: false,
   lastChecked: null,
-  error: {
-    errors: [],
-    message: "",
-  },
+  errors: [],
 };
 
 const loginUserAsync = createAsyncThunk(
@@ -127,6 +124,30 @@ const favouritePostAsync = createAsyncThunk(
   }
 );
 
+const unfavouritePostAsync = createAsyncThunk(
+  "user/unfavouritePost",
+  async (postId: number, thunkApi) => {
+    try {
+      const response = await fetch(
+        process.env.BACKEND_URL ??
+          "http://127.0.0.1:8000/api" + "/post/favourite/" + postId,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      const data: UserAPIResponse = await response.json();
+
+      if (response.status !== 200) return thunkApi.rejectWithValue(data.error!);
+
+      return thunkApi.fulfillWithValue(data.user!);
+    } catch (error) {
+      thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -139,7 +160,7 @@ const userSlice = createSlice({
   },
   selectors: {
     selectCurrentUser: (state) => state.user,
-    selectUserError: (state) => state.error,
+    selectUserError: (state) => state.errors,
     selectUserIsLoading: (state) => state.isLoading,
     selectWasTokenChecked: (state) => state.wasTokenChecked,
     selectLastChecked: (state) => state.lastChecked,
@@ -155,9 +176,9 @@ const userSlice = createSlice({
       })
       .addCase(loginUserAsync.rejected, (state, action) => {
         state.isLoading = false;
-        if (isErrorAPI(action.payload)) state.error = action.payload;
+        if (isErrorAPI(action.payload)) state.errors = action.payload.errors;
         else if (typeof action.payload === "string")
-          state.error.message = action.payload;
+          state.errors.push(action.payload);
       })
       .addCase(registerUserAsync.pending, (state) => {
         state.isLoading = true;
@@ -168,17 +189,17 @@ const userSlice = createSlice({
       })
       .addCase(registerUserAsync.rejected, (state, action) => {
         state.isLoading = false;
-        if (isErrorAPI(action.payload)) state.error = action.payload;
+        if (isErrorAPI(action.payload)) state.errors = action.payload.errors;
         else if (typeof action.payload === "string")
-          state.error.message = action.payload;
+          state.errors.push(action.payload);
       })
       .addCase(refreshTokenAsync.rejected, (state, action) => {
         state.isLoading = false;
         state.wasTokenChecked = true;
         state.lastChecked = new Date(Date.now());
-        if (isErrorAPI(action.payload)) state.error = action.payload;
+        if (isErrorAPI(action.payload)) state.errors = action.payload.errors;
         else if (typeof action.payload === "string")
-          state.error.message = action.payload;
+          state.errors.push(action.payload);
       })
       .addCase(refreshTokenAsync.pending, (state) => {
         state.isLoading = true;
@@ -190,14 +211,27 @@ const userSlice = createSlice({
       })
       .addCase(favouritePostAsync.rejected, (state, action) => {
         state.isLoading = false;
-        if (isErrorAPI(action.payload)) state.error = action.payload;
+        if (isErrorAPI(action.payload)) state.errors = action.payload.errors;
         else if (typeof action.payload === "string")
-          state.error.message = action.payload;
+          state.errors.push(action.payload);
       })
       .addCase(favouritePostAsync.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(favouritePostAsync.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload!;
+      })
+      .addCase(unfavouritePostAsync.rejected, (state, action) => {
+        state.isLoading = false;
+        if (isErrorAPI(action.payload)) state.errors = action.payload.errors;
+        else if (typeof action.payload === "string")
+          state.errors.push(action.payload);
+      })
+      .addCase(unfavouritePostAsync.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(unfavouritePostAsync.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload!;
       });
@@ -209,6 +243,7 @@ export {
   registerUserAsync,
   refreshTokenAsync,
   favouritePostAsync,
+  unfavouritePostAsync,
 };
 export const { logoutUser } = userSlice.actions;
 export const {
