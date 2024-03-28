@@ -47,7 +47,7 @@ class UserController extends AbstractController
 
         $isGoogle = false;
 
-        if (isset ($userData['id']) && $userData['id'] !== null) {
+        if (isset($userData['id']) && $userData['id'] !== null) {
             $isGoogle = true;
 
             $userData['password'] = $userData['id'];
@@ -177,7 +177,6 @@ class UserController extends AbstractController
                     'user',
                     'post',
                     'post_image',
-                    'comment',
                 ]
             ]
         ), true);

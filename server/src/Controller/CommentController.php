@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Post;
 use App\Entity\Comment;
 use App\Form\CommentType;
+use App\Repository\CommentRepository;
 use App\utils\HelperFunctions;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,18 +25,47 @@ class CommentController extends AbstractController
     public function __construct(
         private EntityManagerInterface $entityManager,
         private UserRepository $userRepository,
+        private CommentRepository $commentRepository,
         private JWTEncoderInterface $jwtEncoder,
         private SerializerInterface $serializer,
     ) {
     }
 
+    #[Route('/{id}', name: "get_all_post_comments", methods: 'GET')]
+    public function getAllPostComments(Post $post): JsonResponse
+    {
+        $commentsData = $this->commentRepository->findBy(['post' => $post]);
+        if (count($commentsData) < 1) {
+            return $this->json([
+                'message' => "No comments were found for this post",
+                "errors" => [
+                    "There are no comments present for this post"
+                ]
+            ], 404);
+        }
+        $comments = json_decode($this->serializer->serialize(
+            $commentsData,
+            'json',
+            [
+                'groups' => [
+                    "comment"
+                ]
+            ]
+        ), true);
+        return $this->json([
+            'message' => "Post comments were successfully fetched",
+            "comments" => $comments
+        ], 200);
+    }
+
     #[Route('/{id}', name: 'create', methods: 'POST')]
     public function create(Post $post, Request $request): JsonResponse
     {
+        $commentData = json_decode($request->getContent(), true);
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
 
-        $form->submit($request->request->all());
+        $form->submit($commentData);
         if ($form->isValid()) {
             $user = $this->getUserFromToken($request, $this->jwtEncoder, $this->userRepository);
 
@@ -46,19 +76,21 @@ class CommentController extends AbstractController
             $this->entityManager->flush();
 
 
-            $commentData = json_decode($this->serializer->serialize(
-                $form->getData(),
-                "json",
+            $commentsData = $this->commentRepository->findBy(['post' => $post]);
+            $comments = json_decode($this->serializer->serialize(
+                $commentsData,
+                'json',
                 [
                     'groups' => [
-                        'comment',
+                        "comment"
                     ]
                 ]
             ), true);
 
+
             return $this->json([
                 "message" => "Comment was successfully added",
-                "comemnts" => $commentData,
+                "comments" => $comments,
             ], 200);
         }
 

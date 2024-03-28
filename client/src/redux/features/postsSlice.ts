@@ -35,7 +35,6 @@ const fetchAllPostsAsync = createAsyncThunk(
 
       return thunkAPI.fulfillWithValue(data.posts!);
     } catch (error) {
-      console.log(error);
       return thunkAPI.rejectWithValue(error);
     }
   }

@@ -80,3 +80,9 @@ export interface CommentState {
   isLoading: boolean;
   errors: string[];
 }
+
+export interface CommentAPIREsponse {
+  message: string;
+  error?: string;
+  comments?: Comment[];
+}

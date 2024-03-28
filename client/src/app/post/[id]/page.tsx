@@ -66,7 +66,7 @@ const Page: NextPage<Props> = ({}) => {
         </Carousel>
         <GodInfo post={post} user={user} />
       </div>
-      <CommentSection user={user} />
+      <CommentSection user={user} post={post} />
     </div>
   );
 };

@@ -7,17 +7,16 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
-#[Groups("comment")]
 class Comment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["user", "post"])]
+    #[Groups(["user", "post", "comment"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 1024)]
-    #[Groups(["user", "post"])]
+    #[Groups(["user", "post", "comment"])]
     private ?string $text = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
@@ -26,6 +25,7 @@ class Comment
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['comment'])]
     private ?User $owner = null;
 
     public function getId(): ?int
