@@ -1,14 +1,15 @@
 import { selectAllPosts } from "@/redux/features/postsSlice";
 import { useAppSelector } from "@/redux/store";
+import { Post } from "@/utils/types";
 import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
-interface Props {}
+interface Props {
+  posts: Post[];
+}
 
-const AllGodsCards: NextPage<Props> = ({}) => {
-  const posts = useAppSelector(selectAllPosts);
-
+const AllGodsCards: NextPage<Props> = ({ posts }) => {
   if (posts.length < 1)
     return (
       <span className="font-fira-mono text-white pt-10 text-2xl text-center">

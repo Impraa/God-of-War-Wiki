@@ -151,7 +151,6 @@ class PostController extends AbstractController
                     'user',
                     'post',
                     'post_image',
-                    'comment',
                 ]
             ]
         );
@@ -178,7 +177,6 @@ class PostController extends AbstractController
                     'user',
                     'post',
                     'post_image',
-                    'comment',
                 ]
             ]
         );

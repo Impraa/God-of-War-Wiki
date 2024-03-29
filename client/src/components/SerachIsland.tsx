@@ -7,17 +7,34 @@ import {
   fetchAllPostsAsync,
   selectAllPosts,
 } from "@/redux/features/postsSlice";
-import { Options } from "@/utils/types";
+import { Options, Post } from "@/utils/types";
+import { useSearchParams } from "next/navigation";
 
-interface Props {}
+interface Props {
+  posts: Post[];
+}
 
-const SerachIsland: NextPage<Props> = ({}) => {
-  const posts = useAppSelector(selectAllPosts);
+const SerachIsland: NextPage<Props> = ({ posts }) => {
+  const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const [options, setOptions] = useState<Options>({});
 
   useEffect(() => {
-    if (posts.length < 1) dispatch(fetchAllPostsAsync(options));
+    if (searchParams.get("type")) {
+      const type = searchParams.get("type") as
+        | "nordic_mythos"
+        | "greek_mythos"
+        | undefined;
+      console.log(type);
+      setOptions((oldFormData) => ({
+        ...oldFormData,
+        filter: type,
+      }));
+    }
+  }, []);
+
+  useEffect(() => {
+    dispatch(fetchAllPostsAsync(options));
   }, [options]);
 
   const handleChange = (

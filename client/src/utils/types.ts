@@ -37,7 +37,7 @@ export interface Comment {
 export interface Options {
   sort?: "ASC" | "DESC";
   searchQuery?: string;
-  filter?: "greekMythos" | "nordicMythos";
+  filter?: "greek_mythos" | "nordic_mythos";
 }
 
 //Redux types
@@ -49,6 +49,7 @@ export interface ErrorAPI {
 
 export interface UserState {
   user: User | null;
+  foundUser: User | null;
   isLoading: boolean;
   wasTokenChecked: boolean;
   lastChecked: Date | null;

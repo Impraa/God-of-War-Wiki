@@ -54,6 +54,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private ?bool $isVerified = null;
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Comment::class, orphanRemoval: true)]
+    #[Groups(['user'])]
     private Collection $comments;
 
     public function __construct()

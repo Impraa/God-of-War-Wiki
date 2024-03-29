@@ -9,7 +9,7 @@ const sections = [
     textWithBackground: {
       title: "Dive into the depths of Hades",
       text: "The Greek saga within the God of War franchise immerses players in a captivating world rooted in ancient mythology. As the Ghost of Sparta, Kratos, players embark on an epic odyssey through the realms of Greek gods and monsters. The narrative unfolds against the backdrop of a vengeful Kratos, driven by tragedy and rage. Iconic gods such as Zeus, Poseidon, and Ares become formidable foes, and players must navigate treacherous landscapes, solve intricate puzzles, and engage in intense, visceral combat. The Greek saga explores themes of vengeance, redemption, and the consequences of godly power, crafting a narrative that intertwines seamlessly with the rich tapestry of Greek mythology.",
-      href: "/",
+      href: "/search?type=greek_mythos",
       src: "/HadesUnderworld.png",
       alt: "Hades underworld image",
     },
@@ -24,7 +24,7 @@ const sections = [
     textWithBackground: {
       title: "If you are feeling brave step into Asgard",
       text: "The Nordic saga in God of War transports players to the chilling landscapes of Norse mythology, introducing a reinvented Kratos and his son Atreus. Set against the backdrop of a frozen wilderness, players navigate a world steeped in mysticism, encountering gods like Odin, Thor, and Freya. The narrative explores the complex father-son dynamic as they embark on a perilous quest. Frosty realms, mythical creatures, and rune-covered lore create an atmospheric experience, and players must adapt to the harsh Nordic environment. The saga unfolds with a blend of intense combat, intricate puzzles, and a gripping narrative, immersing players in the frosty and mysterious realms of God of War.",
-      href: "/",
+      href: "/search?type=nordic_mythos",
       src: "/Asgard.png",
       alt: "Asgard image",
     },

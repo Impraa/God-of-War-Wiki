@@ -10,6 +10,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState: UserState = {
   user: null,
+  foundUser: null,
   isLoading: false,
   wasTokenChecked: false,
   lastChecked: null,
@@ -95,7 +96,7 @@ const refreshTokenAsync = createAsyncThunk(
 
       return thunkApi.fulfillWithValue("");
     } catch (error) {
-      thunkApi.rejectWithValue(error);
+      return thunkApi.rejectWithValue(error);
     }
   }
 );
@@ -119,7 +120,7 @@ const favouritePostAsync = createAsyncThunk(
 
       return thunkApi.fulfillWithValue(data.user!);
     } catch (error) {
-      thunkApi.rejectWithValue(error);
+      return thunkApi.rejectWithValue(error);
     }
   }
 );
@@ -143,7 +144,30 @@ const unfavouritePostAsync = createAsyncThunk(
 
       return thunkApi.fulfillWithValue(data.user!);
     } catch (error) {
-      thunkApi.rejectWithValue(error);
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+const fetchSingleProfileAsync = createAsyncThunk(
+  "user/fetchSingleProfile",
+  async (userID: number, thunkAPI) => {
+    try {
+      const response = await fetch(
+        process.env.BACKEND_URL ?? "http://127.0.0.1:8000/api" + "/" + userID,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const data: UserAPIResponse = await response.json();
+
+      if (response.status !== 200) return thunkAPI.rejectWithValue(data.error!);
+
+      return thunkAPI.fulfillWithValue(data.user!);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );
@@ -160,6 +184,7 @@ const userSlice = createSlice({
   },
   selectors: {
     selectCurrentUser: (state) => state.user,
+    selectFoundUser: (state) => state.foundUser,
     selectUserError: (state) => state.errors,
     selectUserIsLoading: (state) => state.isLoading,
     selectWasTokenChecked: (state) => state.wasTokenChecked,
@@ -234,6 +259,19 @@ const userSlice = createSlice({
       .addCase(unfavouritePostAsync.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload!;
+      })
+      .addCase(fetchSingleProfileAsync.rejected, (state, action) => {
+        state.isLoading = false;
+        if (isErrorAPI(action.payload)) state.errors = action.payload.errors;
+        else if (typeof action.payload === "string")
+          state.errors.push(action.payload);
+      })
+      .addCase(fetchSingleProfileAsync.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchSingleProfileAsync.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.foundUser = action.payload!;
       });
   },
 });
@@ -244,6 +282,7 @@ export {
   refreshTokenAsync,
   favouritePostAsync,
   unfavouritePostAsync,
+  fetchSingleProfileAsync,
 };
 export const { logoutUser } = userSlice.actions;
 export const {
@@ -252,5 +291,6 @@ export const {
   selectUserIsLoading,
   selectLastChecked,
   selectWasTokenChecked,
+  selectFoundUser,
 } = userSlice.selectors;
 export default userSlice.reducer;

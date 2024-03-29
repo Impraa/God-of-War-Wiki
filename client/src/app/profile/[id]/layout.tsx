@@ -4,10 +4,10 @@ interface Props {
   children: React.ReactNode;
 }
 
-export const searchMetadata: Metadata = {
-  title: "Search | God of War Wiki",
+export const profileMetadata: Metadata = {
+  title: "Profile | God of War Wiki",
   description:
-    "Discover all things God of War with our comprehensive search feature. Find information on characters, gameplay mechanics, lore, and more. Dive deep into Norse mythology, uncover hidden secrets, and join our vibrant community of fans. Experience the epic saga of Kratos and embark on a journey through the realms of gods and monsters.",
+    "Manage your profile on the God of War Wiki. Access personalized content, track your contributions, and engage with the community. Join discussions, share insights, and connect with fellow fans. Explore Norse mythology, delve into gameplay mechanics, and uncover the rich lore of the legendary game series. Experience the epic saga of Kratos, encounter gods and monsters, and immerse yourself in the world of God of War.",
   keywords: [
     "God of War",
     "Kratos",
@@ -24,7 +24,7 @@ export const searchMetadata: Metadata = {
     "Community",
     "Epic",
     "Mythology",
-    "Search",
+    "Profile",
   ],
   applicationName: "God of War Wiki",
   authors: [{ name: "Kristijan Imprić" }],

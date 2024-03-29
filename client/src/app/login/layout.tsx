@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     "Community",
     "Epic",
     "Mythology",
-    "Register",
+    "Login",
   ],
   applicationName: "God of war wiki",
   authors: [{ name: "Kristijan Imprić" }],

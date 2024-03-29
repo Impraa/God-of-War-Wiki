@@ -331,10 +331,21 @@ class UserController extends AbstractController
     #[Route("/{id}", name: 'get_single_user', methods: ['GET'])]
     public function getSingle(User $user): JsonResponse
     {
+        $userData = json_decode($this->serializer->serialize(
+            $user,
+            "json",
+            [
+                'groups' => [
+                    'user',
+                    'post',
+                    'post_image',
+                ]
+            ]
+        ), true);
 
         return $this->json([
-            "message" => "Post was found successfully",
-            "user" => $user
+            "message" => "User was found successfully",
+            "user" => $userData
         ], 200);
     }
 }
