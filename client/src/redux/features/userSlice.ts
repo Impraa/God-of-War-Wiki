@@ -64,7 +64,7 @@ const registerUserAsync = createAsyncThunk(
       const data: UserAPIResponse = await response.json();
 
       if (response.status !== 201) {
-        return thunkApi.rejectWithValue(data.error!);
+        return thunkApi.rejectWithValue(data);
       }
 
       return thunkApi.fulfillWithValue(data.user!);

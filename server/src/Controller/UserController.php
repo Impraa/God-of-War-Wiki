@@ -151,7 +151,8 @@ class UserController extends AbstractController
 
         if (!$foundUser || !$this->passwordHasher->isPasswordValid($foundUser, $user->getPassword())) {
             return $this->json([
-                "message" => "Invalid username or password"
+                "message" => "User login failed",
+                "errors" => ["Invalid username or password"]
             ], 401);
         }
 

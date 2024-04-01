@@ -8,11 +8,13 @@ import { signIn } from "next-auth/react";
 import {
   loginUserAsync,
   selectCurrentUser,
+  selectUserError,
   selectUserIsLoading,
 } from "@/redux/features/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { useRouter } from "next/navigation";
 import { ClimbingBoxLoader } from "react-spinners";
+import Message from "./Message";
 
 interface Props {}
 
@@ -31,6 +33,7 @@ const LoginForm: NextPage<Props> = ({}) => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectCurrentUser);
   const isLoading = useAppSelector(selectUserIsLoading);
+  const error = useAppSelector(selectUserError);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const router = useRouter();
 
@@ -50,7 +53,9 @@ const LoginForm: NextPage<Props> = ({}) => {
 
   useEffect(() => {
     if (user != null) {
-      router.push("/");
+      setTimeout(() => {
+        router.push("/");
+      }, 3000);
     }
   }, [user]);
 
@@ -60,6 +65,13 @@ const LoginForm: NextPage<Props> = ({}) => {
         className="flex flex-col items-center border-b-2 border-primary pb-5"
         onSubmit={submitHandle}
       >
+        {error.length > 0 ? (
+          <Message isError>{error[0]}</Message>
+        ) : user ? (
+          <Message>You have been successfully logged in</Message>
+        ) : (
+          <></>
+        )}
         {formFields.map((item, i) => {
           return <BetterInput key={i} setState={setFormData} {...item} />;
         })}

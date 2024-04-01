@@ -8,10 +8,12 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 import {
   registerUserAsync,
   selectCurrentUser,
+  selectUserError,
   selectUserIsLoading,
 } from "@/redux/features/userSlice";
 import { useRouter } from "next/navigation";
 import ClimbingBoxLoader from "react-spinners/ClimbingBoxLoader";
+import Message from "./Message";
 
 interface Props {}
 
@@ -38,6 +40,7 @@ const RegisterForm: NextPage<Props> = ({}) => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectCurrentUser);
   const isLoading = useAppSelector(selectUserIsLoading);
+  const error = useAppSelector(selectUserError);
   const router = useRouter();
 
   const [formData, setFormData] = useState<RegisterUser>({
@@ -62,6 +65,13 @@ const RegisterForm: NextPage<Props> = ({}) => {
       className="flex flex-col items-center border-b-2 border-primary pb-5"
       onSubmit={submitHandle}
     >
+      {error.length > 0 ? (
+        <Message isError>{error[0]}</Message>
+      ) : currentUser ? (
+        <Message>You have been successfully logged in</Message>
+      ) : (
+        <></>
+      )}
       {formFields.map((item, i) => {
         return <BetterInput key={i} setState={setFormData} {...item} />;
       })}
