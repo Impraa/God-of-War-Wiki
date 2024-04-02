@@ -35,4 +35,25 @@ trait HelperFunctions
         $user = $userRepository->findOneBy(["username" => $decodedToken["username"]]);
         return $user;
     }
+
+    public function getClosestResult(string $serachQuery, array $terms)
+    {
+        $shortest = -1;
+
+        foreach ($terms as $term) {
+            $lev = levenshtein($serachQuery, $term->getName());
+
+            if ($lev === 0) {
+                $closest = $term->getName();
+                $shortest = 0;
+                break;
+            }
+
+            if ($lev <= $shortest || $shortest < 0) {
+                $closest = $term->getName();
+                $shortest = $lev;
+            }
+        }
+        return $closest;
+    }
 }

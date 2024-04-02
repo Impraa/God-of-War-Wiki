@@ -38,7 +38,9 @@ class PostController extends AbstractController
     {
         $options = json_decode($request->getContent(), true);
 
-        $posts = $this->postRepository->getPostsByCriteria($options);
+        $allPosts = $this->postRepository->findAll();
+
+        $posts = $this->postRepository->getPostsByCriteria($options, $allPosts);
 
         $postsData = $this->serializer->serialize(
             $posts,
