@@ -5,6 +5,7 @@ import {
   unfavouritePostAsync,
 } from "@/redux/features/userSlice";
 import { useAppDispatch } from "@/redux/store";
+import { isPost } from "@/utils/helperFunction";
 import { Post, User } from "@/utils/types";
 import { NextPage } from "next";
 
@@ -49,18 +50,37 @@ const GodInfo: NextPage<Props> = ({ post, user }) => {
       />
       {user ? (
         <div className="bg-white w-[3.5rem] h-[3.5rem] rounded-[50%] mt-5 ml-2 flex items-center justify-center">
-          {user.favouritePosts.find(
-            (favouritePost) => favouritePost.id === post.id
-          ) ? (
-            <Heart
-              onClick={handleHeartClick}
-              className="w-[3rem] h-[3rem] text-primary"
-            />
+          {user.favouritePosts && Array.isArray(user.favouritePosts) ? (
+            user.favouritePosts.find(
+              (favouritePost) => favouritePost.id === post.id
+            ) ? (
+              <Heart
+                onClick={handleHeartClick}
+                className="w-[3rem] h-[3rem] text-primary hover:scale-110 cursor-pointer transition-all"
+              />
+            ) : (
+              <HeartOutline
+                onClick={handleHeartOutlineClick}
+                className="w-[3rem] h-[3rem] text-primary hover:scale-110 cursor-pointer transition-all"
+              />
+            )
           ) : (
-            <HeartOutline
-              onClick={handleHeartOutlineClick}
-              className="w-[3rem] h-[3rem] text-primary"
-            />
+            <></>
+          )}
+          {isPost(user.favouritePosts) ? (
+            user.favouritePosts.id === post.id ? (
+              <Heart
+                onClick={handleHeartClick}
+                className="w-[3rem] h-[3rem] text-primary hover:scale-110 cursor-pointer transition-all"
+              />
+            ) : (
+              <HeartOutline
+                onClick={handleHeartOutlineClick}
+                className="w-[3rem] h-[3rem] text-primary hover:scale-110 cursor-pointer transition-all"
+              />
+            )
+          ) : (
+            <></>
           )}
         </div>
       ) : (
