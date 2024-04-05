@@ -220,6 +220,7 @@ const userSlice = createSlice({
       })
       .addCase(refreshTokenAsync.rejected, (state, action) => {
         state.isLoading = false;
+        state.user = null;
         state.wasTokenChecked = true;
         state.lastChecked = new Date(Date.now());
         if (isErrorAPI(action.payload)) state.errors = action.payload.errors;

@@ -31,12 +31,12 @@ const Hydration: NextPage<Props> = ({ children }) => {
           new Date().toLocaleString("en-US", {
             timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           })
-        ).getSeconds() -
+        ).getTime() -
           new Date(
-            new Date(lastChecked!).toLocaleString("en-US", {
+            new Date(lastChecked).toLocaleString("en-US", {
               timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
             })
-          ).getSeconds() >
+          ).getTime() >
           2 * 60 * 60 * 1000)
     )
       checkUserSession();
