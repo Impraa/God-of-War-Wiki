@@ -6,7 +6,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { Post, User } from "@/utils/types";
 import { NextPage } from "next";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CommentCard from "./CommentCard";
 
 interface Props {
@@ -17,10 +17,12 @@ interface Props {
 const CommentSection: NextPage<Props> = ({ user, post }) => {
   const comments = useAppSelector(selectAllComments);
   const dispatch = useAppDispatch();
+  const textField = useRef<null | HTMLInputElement>(null);
   const [text, setText] = useState("");
 
   const handleCommentSubmission = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (textField.current) textField.current.value = "";
     dispatch(
       addNewCommentAsync({ incomingData: { text: text }, postID: post.id })
     );
@@ -41,13 +43,17 @@ const CommentSection: NextPage<Props> = ({ user, post }) => {
           className="flex flex-col md:flex-row"
         >
           <input
+            ref={textField}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setText(e.currentTarget.value);
             }}
             placeholder="Write a commment..."
-            className="w-full my-3 px-2 py-5 rounded-full font-fira-mono"
+            className="w-full my-3 px-2 py-5 rounded-full font-fira-mono hover:ring-2 focus:ring-4 outline-none ring-primary transition-all"
           />
-          <button className="bg-primary text-white self-start md:self-center font-fira-mono px-5 py-2 text-xl font-[500] rounded-full md:basis-72 md:py-5 md:ml-2">
+          <button
+            className="bg-primary text-white self-start md:self-center font-fira-mono px-5 py-2 text-xl font-[500] rounded-full md:basis-72 md:py-5 md:ml-2 
+          hover:scale-110 transition-all"
+          >
             Add a comment
           </button>
         </form>

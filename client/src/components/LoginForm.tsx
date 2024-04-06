@@ -55,7 +55,7 @@ const LoginForm: NextPage<Props> = ({}) => {
     if (user != null) {
       setTimeout(() => {
         router.push("/");
-      }, 3000);
+      }, 2500);
     }
   }, [user]);
 

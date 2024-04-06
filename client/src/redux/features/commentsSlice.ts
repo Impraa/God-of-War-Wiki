@@ -69,6 +69,35 @@ const addNewCommentAsync = createAsyncThunk(
   }
 );
 
+const deleteCommentAsync = createAsyncThunk(
+  "comments/deleteComment",
+  async (commentId: number, thunkAPI) => {
+    try {
+      const response = await fetch(
+        process.env.BACKEND_URL ??
+          "http://127.0.0.1:8000/api" + "/comment/" + commentId,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      const data: CommentAPIREsponse = await response.json();
+
+      if (response.status !== 200) {
+        return thunkAPI.rejectWithValue(data.error);
+      }
+
+      return thunkAPI.fulfillWithValue(data.comments!);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 const commentsSilce = createSlice({
   name: "comments",
   initialState,
@@ -105,11 +134,24 @@ const commentsSilce = createSlice({
         if (isErrorAPI(action.payload)) state.errors = action.payload.errors;
         else if (typeof action.payload === "string")
           state.errors.push(action.payload);
+      })
+      .addCase(deleteCommentAsync.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteCommentAsync.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.comments = action.payload;
+      })
+      .addCase(deleteCommentAsync.rejected, (state, action) => {
+        state.isLoading = false;
+        if (isErrorAPI(action.payload)) state.errors = action.payload.errors;
+        else if (typeof action.payload === "string")
+          state.errors.push(action.payload);
       });
   },
 });
 
-export { fetchAllPostCommentsAsync, addNewCommentAsync };
+export { fetchAllPostCommentsAsync, addNewCommentAsync, deleteCommentAsync };
 export const { selectAllComments, selectCommentError, selectCommentIsLoading } =
   commentsSilce.selectors;
 export default commentsSilce.reducer;

@@ -112,8 +112,10 @@ class CommentController extends AbstractController
         $this->entityManager->remove($comment);
         $this->entityManager->flush();
 
+        $newComments = $this->commentRepository->findAll();
+
         $commentData = json_decode($this->serializer->serialize(
-            $comment,
+            $newComments,
             "json",
             [
                 'groups' => [
