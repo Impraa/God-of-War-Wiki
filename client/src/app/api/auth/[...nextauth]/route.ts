@@ -5,7 +5,7 @@ import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 import { signIn } from "next-auth/react";
 
-const handler = NextAuth({
+const options = NextAuth({
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -13,22 +13,19 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ user, account }) {
-      if (account && account.provider === "google") {
-        console.log(user);
-        const userObj: User = {
-          id: user.id,
-          username: user.name!,
-          email: user.email!,
-          profilePicture: user.image!,
-          bio: "",
-        };
-        console.log(userObj);
-        //store.dispatch(registerUserAsync(userObj));
+    jwt({ token, account, user }) {
+      if (account) {
+        token.accessToken = account.access_token;
+        token.id = user?.id;
       }
-      return true;
+      return token;
+    },
+    session({ session, token }) {
+      session.user.id = token.id as string;
+
+      return session;
     },
   },
 });
 
-export { handler as GET, handler as POST };
+export { options as GET, options as POST };

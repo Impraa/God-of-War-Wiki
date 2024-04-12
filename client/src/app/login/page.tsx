@@ -1,11 +1,28 @@
 "use client";
 import LoginForm from "@/components/LoginForm";
+import { registerUserAsync } from "@/redux/features/userSlice";
+import { useAppDispatch } from "@/redux/store";
+import { GoogleUser, RegisterUser } from "@/utils/types";
 import { NextPage } from "next";
+import { User } from "next-auth";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 interface Props {}
 
 const Page: NextPage<Props> = ({}) => {
+  const dispatch = useAppDispatch();
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (session && session.user) {
+      console.log(session.user as GoogleUser);
+      dispatch(registerUserAsync(session.user as GoogleUser));
+    }
+  }, [session, status]);
+
   return (
     <div>
       <div className="flex flex-col items-center justify-center">

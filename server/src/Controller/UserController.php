@@ -52,7 +52,42 @@ class UserController extends AbstractController
 
             $userData['password'] = $userData['id'];
             $userData['username'] = $userData['name'];
-            unset($userData['id'], $userData['name']);
+            unset($userData['id'], $userData['name'], $userData['image']);
+
+            $foundUser = $this->userRepository->findOneBy(['username' => $userData['username']]);
+            if ($foundUser && $this->passwordHasher->isPasswordValid($foundUser, $userData['password'])) {
+                $jwtToken = $this->jwtManager->create($foundUser);
+
+                $cookie = new Cookie(
+                    "JWT_TOKEN",
+                    $jwtToken,
+                    strtotime("+30 days"),
+                    "/",
+                    null,
+                    true,
+                    true,
+                    true,
+                    "none"
+                );
+
+                $userData = json_decode($this->serializer->serialize(
+                    $foundUser,
+                    "json",
+                    [
+                        'groups' => [
+                            'user',
+                            'post',
+                            'post_image',
+                        ]
+                    ]
+                ), true);
+
+                $response = $this->json(["user" => $userData], 200);
+
+                $response->headers->setCookie($cookie);
+
+                return $response;
+            }
         }
 
         unset($userData['confirmPassword']);

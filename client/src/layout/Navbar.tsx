@@ -7,6 +7,7 @@ import NavItems from "@/components/NavItems";
 import { logoutUser, selectCurrentUser } from "@/redux/features/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { NextPage } from "next";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -36,6 +37,7 @@ const Navbar: NextPage<Props> = ({}) => {
 
   const handleLogout = () => {
     dispatch(logoutUser());
+    signOut();
   };
 
   useEffect(() => {

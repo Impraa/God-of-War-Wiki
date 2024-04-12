@@ -11,6 +11,13 @@ export interface RegisterUser {
   password: string;
 }
 
+export interface GoogleUser {
+  id: string;
+  name: string;
+  email: string;
+  image: string;
+}
+
 export interface User {
   id: number | string;
   username: string;

@@ -1,7 +1,7 @@
 "use client";
 import { NextPage } from "next";
 import BetterInput from "./BetterInput";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { LoginUser, RegisterUser } from "@/utils/types";
 import BetterButton from "./BetterButton";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
@@ -53,12 +53,14 @@ const RegisterForm: NextPage<Props> = ({}) => {
   const submitHandle = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(registerUserAsync(formData));
-    if (currentUser) {
+  };
+
+  useEffect(() => {
+    if (currentUser)
       setTimeout(() => {
         router.push("/");
       }, 3000);
-    }
-  };
+  }, [currentUser]);
 
   return (
     <form

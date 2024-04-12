@@ -1,5 +1,6 @@
 import { isErrorAPI } from "@/utils/helperFunction";
 import {
+  GoogleUser,
   LoginUser,
   RegisterUser,
   User,
@@ -47,7 +48,7 @@ const loginUserAsync = createAsyncThunk(
 
 const registerUserAsync = createAsyncThunk(
   "user/registerUser",
-  async (user: RegisterUser | User, thunkApi) => {
+  async (user: RegisterUser | User | GoogleUser, thunkApi) => {
     try {
       const response = await fetch(
         process.env.BACKEND_URL ?? "http://127.0.0.1:8000/api" + "/register",
@@ -62,8 +63,8 @@ const registerUserAsync = createAsyncThunk(
       );
 
       const data: UserAPIResponse = await response.json();
-
-      if (response.status !== 201) {
+      console.log(data);
+      if (response.status !== 201 && response.status !== 200) {
         return thunkApi.rejectWithValue(data);
       }
 
@@ -210,6 +211,7 @@ const userSlice = createSlice({
       })
       .addCase(registerUserAsync.fulfilled, (state, action) => {
         state.isLoading = false;
+        console.log(action.payload);
         state.user = action.payload;
       })
       .addCase(registerUserAsync.rejected, (state, action) => {
