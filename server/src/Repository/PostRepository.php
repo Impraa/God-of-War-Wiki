@@ -31,10 +31,12 @@ class PostRepository extends ServiceEntityRepository
             $serachQuery = '%' . $this->getClosestResult($criteria['searchQuery'], $allPosts) . '%';
             $sqlQuery->andWhere('p.name like :name')->setParameter(':name', $serachQuery);
         }
-        if (isset($criteria['filter']))
+        if (isset($criteria['filter'])) {
             $sqlQuery->andWhere('p.type like :type')->setParameter(':type', $criteria['filter']);
-        if (isset($criteria['sort']))
+        }
+        if (isset($criteria['sort'])) {
             $sqlQuery->orderBy('p.name', $criteria['sort']);
+        }
 
         return $sqlQuery->getQuery()->execute();
     }

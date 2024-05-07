@@ -38,7 +38,7 @@ trait HelperFunctions
 
     public function getClosestResult(string $serachQuery, array $terms)
     {
-        $shortest = -1;
+        $closest = 'null';
 
         foreach ($terms as $term) {
             $lev = levenshtein($serachQuery, $term->getName());
@@ -49,7 +49,7 @@ trait HelperFunctions
                 break;
             }
 
-            if ($lev <= $shortest || $shortest < 0) {
+            if ($lev <= 4) {
                 $closest = $term->getName();
                 $shortest = $lev;
             }
